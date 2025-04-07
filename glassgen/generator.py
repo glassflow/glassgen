@@ -78,7 +78,11 @@ class Generator:
         """
         count = 0
         events_to_send = self.generator_config.num_records
-        
+        if events_to_send == -1:
+            events_to_send = float('inf')
+        else:
+            events_to_send = int(events_to_send)
+
         while True:
             batch_size = (
                 self.batch_controller.get_batch_size(self.max_bulk_size)
@@ -88,7 +92,7 @@ class Generator:
             actual_batch_size = min(batch_size, events_to_send - count)
             records = self._generate_batch(actual_batch_size)
             count += len(records)
-            print(f"Generated {len(records)}. Total records generated: {count} out of {self.generator_config.num_records}")
+            print(f"Generated {len(records)}. Total records generated: {count} out of {events_to_send}")
             if len(records) > 1:
                 self.sink.publish_bulk(records)
             else:
@@ -96,8 +100,6 @@ class Generator:
             
             if self.batch_controller:
                 self.batch_controller.record_sent(actual_batch_size)
-
-            if self.generator_config.num_records == -1:
-                continue
-            elif count >= events_to_send:
+                
+            if count >= events_to_send:
                 break
