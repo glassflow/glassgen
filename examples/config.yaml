@@ -1,0 +1,14 @@
+schema:
+  name: $string
+  age: $intrange(18, 65)
+  email: $email
+  country: $country
+  id: $uuid
+
+sink:
+  type: csv
+  path: output.csv
+
+generation:
+  count: 1000
+  rate: 100 
