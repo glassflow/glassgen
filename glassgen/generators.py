@@ -1,11 +1,18 @@
 from enum import Enum
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, List
 from faker import Faker
+import random
+from datetime import datetime
+import time
 
 class GeneratorType(str, Enum):
     """Supported generator types"""
     STRING = "string"
-    INT = "int"    
+    INT = "int"
+    INTRANGE = "intrange"  # New generator type for integer range
+    CHOICE = "choice"  # New generator type for picking from a list
+    DATETIME = "datetime"  # New generator type for current datetime
+    TIMESTAMP = "timestamp"  # New generator type for Unix timestamp
     EMAIL = "email"
     COUNTRY = "country"
     UUID = "uuid"
@@ -28,6 +35,14 @@ class GeneratorType(str, Enum):
     COLOR_NAME = "color_name"
     COMPANY_EMAIL = "company_email"
 
+def choice_generator(choices: List[str]) -> str:
+    """Generate a random choice from a list of strings"""
+    return random.choice(choices)
+
+def intrange_generator(min_val: int, max_val: int) -> int:
+    """Generate a random integer between min_val and max_val"""
+    return random.randint(min_val, max_val)
+
 class GeneratorRegistry:
     """Registry for data generators"""
     def __init__(self):
@@ -40,6 +55,10 @@ class GeneratorRegistry:
         self._generators = {
             GeneratorType.STRING: self._faker.word,
             GeneratorType.INT: self._faker.random_int,
+            GeneratorType.INTRANGE: intrange_generator,
+            GeneratorType.CHOICE: choice_generator,
+            GeneratorType.DATETIME: lambda: datetime.now().isoformat(),
+            GeneratorType.TIMESTAMP: lambda: int(time.time()),
             GeneratorType.EMAIL: self._faker.email,
             GeneratorType.COUNTRY: self._faker.country,
             GeneratorType.UUID: lambda: str(self._faker.uuid4()),

@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
 import re
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 from pydantic import BaseModel, Field
 from glassgen.generators import GeneratorType, registry
 from glassgen.schema.base import BaseSchema
@@ -29,10 +28,16 @@ class ConfigSchema(BaseSchema, BaseModel):
             
             params = []
             if params_str:
-                # Simple parameter parsing - can be enhanced for more complex cases
-                params = [p.strip() for p in params_str.split(",")]
-                # Convert numeric parameters
-                params = [int(p) if p.isdigit() else p for p in params]
+                # Handle choice generator specially
+                if generator_name == GeneratorType.CHOICE:
+                    # Split by comma but preserve quoted strings
+                    params = [p.strip().strip('"\'') for p in params_str.split(",")]
+                    
+                else:
+                    # Simple parameter parsing for other generators
+                    params = [p.strip() for p in params_str.split(",")]
+                    # Convert numeric parameters
+                    params = [int(p) if p.isdigit() else p for p in params]
             
             fields[name] = SchemaField(
                 name=name,
@@ -57,6 +62,15 @@ class ConfigSchema(BaseSchema, BaseModel):
         """Generate a single record based on the schema"""
         record = {}
         for field_name, field in self.fields.items():
-            generator = registry.get_generator(field.generator)            
-            record[field_name] = generator()
+            generator = registry.get_generator(field.generator)
+            # Pass parameters to the generator if they exist
+            if field.params:
+                if field.generator == GeneratorType.CHOICE:
+                    # For choice generator, pass the list directly
+                    record[field_name] = generator(field.params)
+                else:
+                    # For other generators, unpack the parameters
+                    record[field_name] = generator(*field.params)
+            else:
+                record[field_name] = generator()
         return record
