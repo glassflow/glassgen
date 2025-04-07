@@ -5,7 +5,7 @@ GlassGen is a flexible synthetic data generation service that can generate data 
 ## Features
 
 - Generate synthetic data based on custom schemas
-- Multiple output formats (CSV, JSON, Kafka)
+- Multiple output formats (CSV, Kafka, Webhook)
 - Configurable generation rate
 - Extensible sink architecture
 - CLI and Python SDK interfaces
@@ -20,7 +20,7 @@ pip install glassgen
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/glassgen.git
+git clone https://github.com/glassflow/glassgen.git
 cd glassgen
 ```
 
@@ -70,10 +70,10 @@ glassgen.generate(config=config)
         "field2": "$generator_type(param1, param2)"
     },
     "sink": {
-        "type": "csv|json|kafka",
-        "path": "output.csv",  // for csv/json
-        "bootstrap_servers": "localhost:9092",  // for kafka
-        "topic": "topic_name"  // for kafka
+        "type": "csv|kafka|webhook",
+        "params": {
+            // sink-specific parameters
+        }
     },
     "generator": {
         "rps": 1000,  // records per second
@@ -89,17 +89,26 @@ glassgen.generate(config=config)
 {
     "sink": {
         "type": "csv",
-        "path": "output.csv"
+        "params": {
+            "path": "output.csv"
+        }
     }
 }
 ```
 
-### JSON Sink
+### WebHook Sink
 ```json
 {
     "sink": {
-        "type": "json",
-        "path": "output.json"
+        "type": "webhook",
+        "params": {
+            "url": "https://your-webhook-url.com",
+            "headers": {
+                "Authorization": "Bearer your-token",
+                "Custom-Header": "value"
+            },
+            "timeout": 30  // optional, defaults to 30 seconds
+        }
     }
 }
 ```
@@ -112,12 +121,14 @@ GlassGen supports multiple Kafka sink types:
 {
     "sink": {
         "type": "kafka.confluent",
-        "bootstrap_servers": "your-confluent-bootstrap-server",
-        "topic": "topic_name",
-        "security_protocol": "SASL_SSL",
-        "sasl_mechanism": "PLAIN",
-        "sasl_plain_username": "your-api-key",
-        "sasl_plain_password": "your-api-secret"
+        "params": {
+            "bootstrap_servers": "your-confluent-bootstrap-server",
+            "topic": "topic_name",
+            "security_protocol": "SASL_SSL",
+            "sasl_mechanism": "PLAIN",
+            "sasl_plain_username": "your-api-key",
+            "sasl_plain_password": "your-api-secret"
+        }
     }
 }
 ```
@@ -127,11 +138,13 @@ GlassGen supports multiple Kafka sink types:
 {
     "sink": {
         "type": "kafka.aiven",
-        "bootstrap_servers": "your-aiven-bootstrap-server",
-        "topic": "topic_name",
-        "security_protocol": "SASL_SSL",
-        "sasl.mechanisms": "SCRAM-SHA-256",
-        "ssl_cafile": "path/to/ca.pem",        
+        "params": {
+            "bootstrap_servers": "your-aiven-bootstrap-server",
+            "topic": "topic_name",
+            "security_protocol": "SASL_SSL",
+            "sasl.mechanisms": "SCRAM-SHA-256",
+            "ssl_cafile": "path/to/ca.pem"
+        }
     }
 }
 ```
@@ -186,8 +199,13 @@ GlassGen supports multiple Kafka sink types:
         "company": "$company"
     },
     "sink": {
-        "type": "csv",
-        "path": "output.csv"
+        "type": "webhook",
+        "params": {
+            "url": "https://api.example.com/webhook",
+            "headers": {
+                "Authorization": "Bearer your-token"
+            }
+        }
     },
     "generator": {
         "rps": 1500,
