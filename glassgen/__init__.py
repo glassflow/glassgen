@@ -1,6 +1,6 @@
 from .generator import Generator
 from .schema import BaseSchema, ConfigSchema, UserSchema
-from .sinks import CSVSink, JSONSink, KafkaSink, BaseSink
+from .sinks import SinkFactory, BaseSink
 from .interface import generate
 
 __version__ = "0.1.0"
@@ -10,9 +10,7 @@ __all__ = [
     "BaseSchema",
     "ConfigSchema",
     "UserSchema",
-    "CSVSink",
-    "JSONSink",
-    "KafkaSink",
+    "SinkFactory",
     "BaseSink",
     "generate",
 ] 

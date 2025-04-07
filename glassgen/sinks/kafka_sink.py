@@ -1,18 +1,62 @@
-import json
 from typing import Any, Dict
-from kafka import KafkaProducer
 from glassgen.sinks.base import BaseSink
+from glassgen.sinks.kafka import BaseKafkaClient
+import socket
 
-class KafkaSink(BaseSink):
-    def __init__(self, bootstrap_servers: str, topic: str):
-        self.producer = KafkaProducer(
-            bootstrap_servers=bootstrap_servers,
-            value_serializer=lambda v: json.dumps(v).encode('utf-8')
-        )
-        self.topic = topic
+    
+class ConfluentKafkaSink(BaseSink, BaseKafkaClient):
+    def __init__(self, sink_config: dict):
+        self.sink_config = sink_config                
+        bootstrap_servers = self.sink_config['bootstrap_servers']
+        self.username = self.sink_config['username']
+        self.password = self.sink_config['password']
+        self.topic = self.sink_config['topic']
 
+        super().__init__(bootstrap_servers)
+
+    def get_client_config(self) -> Dict:
+        """Get Confluent client configuration"""
+        return {
+            "bootstrap.servers": self.bootstrap_servers,
+            "security.protocol": "SASL_SSL",
+            "sasl.mechanisms": "PLAIN",
+            "sasl.username": self.username,
+            "sasl.password": self.password,
+            "client.id": socket.gethostname()
+        }
+    
     def publish(self, data: Dict[str, Any]) -> None:
-        self.producer.send(self.topic, value=data)
+        self.send_messages(self.topic, [data])
 
     def close(self) -> None:
-        self.producer.close() 
+        pass
+
+
+class AivenKafkaSink(BaseSink, BaseKafkaClient):
+    def __init__(self, sink_config: dict):
+        self.sink_config = sink_config
+        bootstrap_servers = self.sink_config['bootstrap_servers']
+        self.username = self.sink_config['username']
+        self.password = self.sink_config['password']
+        self.ca_cert = self.sink_config['ca_cert']
+        self.topic = self.sink_config['topic']
+
+        super().__init__(bootstrap_servers)
+        
+    def publish(self, data: Dict[str, Any]) -> None:
+        self.send_messages(self.topic, [data])
+
+    def close(self) -> None:
+        pass
+
+    def get_client_config(self) -> Dict:
+        """Get Aiven client configuration""" 
+        return {
+            "bootstrap.servers": self.bootstrap_servers,
+            "security.protocol": "SASL_SSL",
+            "sasl.mechanisms": "SCRAM-SHA-256",
+            "sasl.username": self.username,
+            "sasl.password": self.password,
+            "client.id": socket.gethostname(),            
+            "ssl.ca.location": self.ca_cert
+        }
