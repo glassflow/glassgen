@@ -1,6 +1,5 @@
 schema:
   name: $string
-  age: $intrange(18, 65)
   email: $email
   country: $country
   id: $uuid

@@ -9,8 +9,7 @@ def demo_basic_usage():
     
     # Create a schema
     schema = Schema.from_dict({
-        "name": "$string",
-        "age": "$intrange(18, 65)",
+        "name": "$string",        
         "email": "$email",
         "country": "$country",
         "id": "$uuid",
@@ -31,8 +30,7 @@ def demo_with_rate_limiting():
     print("\n=== Rate-Limited Generation Demo ===")
     
     schema = Schema.from_dict({
-        "name": "$string",
-        "age": "$intrange(18, 65)",
+        "name": "$string",      
         "email": "$email"
     })
     
@@ -53,8 +51,7 @@ def demo_kafka_sink():
     # Note: This requires a running Kafka instance
     try:
         schema = Schema.from_dict({
-            "name": "$string",
-            "age": "$intrange(18, 65)"
+            "name": "$string",            
         })
         
         sink = KafkaSink(
@@ -77,7 +74,6 @@ def demo_from_config():
     config = {
         "schema": {
             "name": "$string",
-            "age": "$intrange(18, 65)",
             "email": "$email"
         },
         "sink": {

@@ -5,7 +5,6 @@ from glassgen.schema import Schema
 def sample_schema():
     return Schema.from_dict({
         "name": "$string",
-        "age": "$intrange(18, 65)",
         "email": "$email",
         "country": "$country",
         "id": "$uuid"
@@ -16,7 +15,6 @@ def sample_config():
     return {
         "schema": {
             "name": "$string",
-            "age": "$intrange(18, 65)",
             "email": "$email"
         },
         "sink": {

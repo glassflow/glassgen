@@ -5,8 +5,7 @@ from faker import Faker
 class GeneratorType(str, Enum):
     """Supported generator types"""
     STRING = "string"
-    INT = "int"
-    INTRANGE = "intrange"
+    INT = "int"    
     EMAIL = "email"
     COUNTRY = "country"
     UUID = "uuid"
@@ -41,7 +40,6 @@ class GeneratorRegistry:
         self._generators = {
             GeneratorType.STRING: self._faker.word,
             GeneratorType.INT: self._faker.random_int,
-            GeneratorType.INTRANGE: self._faker.random_int,
             GeneratorType.EMAIL: self._faker.email,
             GeneratorType.COUNTRY: self._faker.country,
             GeneratorType.UUID: lambda: str(self._faker.uuid4()),

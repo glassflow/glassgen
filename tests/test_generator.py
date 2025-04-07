@@ -8,7 +8,7 @@ from glassgen.sinks import CSVSink
 def test_generator_creation():
     schema = Schema.from_dict({
         "name": "$string",
-        "age": "$intrange(18, 65)"
+        
     })
     
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp:
@@ -21,7 +21,6 @@ def test_generator_creation():
         assert generator.schema == schema
         assert generator.sink == sink
         assert "string" in generator._generators
-        assert "intrange" in generator._generators
         
     finally:
         os.unlink(tmp_path)
@@ -29,7 +28,6 @@ def test_generator_creation():
 def test_record_generation():
     schema = Schema.from_dict({
         "name": "$string",
-        "age": "$intrange(18, 65)"
     })
     
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp:
@@ -43,10 +41,7 @@ def test_record_generation():
         record = generator._generate_record()
         
         assert "name" in record
-        assert "age" in record
         assert isinstance(record["name"], str)
-        assert isinstance(record["age"], int)
-        assert 18 <= record["age"] <= 65
         
     finally:
         os.unlink(tmp_path)
@@ -54,7 +49,6 @@ def test_record_generation():
 def test_generator_with_rate():
     schema = Schema.from_dict({
         "name": "$string",
-        "age": "$intrange(18, 65)"
     })
     
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp:

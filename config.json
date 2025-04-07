@@ -1,7 +1,6 @@
 {
     "schema": {
-        "name": "$name",
-        "age": "$intrange(18, 65)",
+        "name": "$name",        
         "email": "$email",
         "country": "$country",
         "id": "$uuid",

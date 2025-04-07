@@ -9,7 +9,6 @@ def test_load_config():
     config_data = {
         "schema": {
             "name": "$string",
-            "age": "$intrange(18, 65)"
         },
         "sink": {
             "type": "csv",
@@ -55,7 +54,6 @@ def test_cli_generate():
     config_data = {
         "schema": {
             "name": "$string",
-            "age": "$intrange(18, 65)"
         },
         "sink": {
             "type": "csv",

@@ -92,7 +92,6 @@ glassgen.generate(config=config)
 ### Basic Types
 - `$string`: Random string
 - `$int`: Random integer
-- `$intrange(min, max)`: Random integer within range
 - `$boolean`: Random boolean value
 - `$uuid`: Random UUID
 - `$uuid4`: Random UUID4
@@ -129,7 +128,6 @@ glassgen.generate(config=config)
 {
     "schema": {
         "name": "$name",
-        "age": "$intrange(18, 65)",
         "email": "$email",
         "country": "$country",
         "id": "$uuid",

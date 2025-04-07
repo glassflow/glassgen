@@ -5,7 +5,7 @@ from .generators import GeneratorType, registry
 
 class SchemaField(BaseModel):
     name: str
-    generator: str
+    generator: GeneratorType
     params: List[Any] = Field(default_factory=list)
 
 class Schema(BaseModel):
@@ -47,9 +47,11 @@ class Schema(BaseModel):
                 raise ValueError(
                     f"Unsupported generator: {field.generator}. "
                     f"Supported generators are: {', '.join(supported_generators)}"
-                )
-            
-            if field.generator == GeneratorType.INTRANGE and len(field.params) != 2:
-                raise ValueError(
-                    "$intrange generator requires exactly 2 parameters (min, max)"
-                ) 
+                )            
+    
+    def _generate_record(self) -> Dict[str, Any]:
+        record = {}
+        for field_name, field in self.fields.items():
+            generator = registry.get_generator(field.generator)            
+            record[field_name] = generator()
+        return record
