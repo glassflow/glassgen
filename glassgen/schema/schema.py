@@ -1,21 +1,25 @@
+from abc import ABC, abstractmethod
 import re
 from typing import Any, Dict, List, Union
 from pydantic import BaseModel, Field
-from .generators import GeneratorType, registry
+from glassgen.generators import GeneratorType, registry
+from glassgen.schema.base import BaseSchema
+
 
 class SchemaField(BaseModel):
     name: str
-    generator: GeneratorType
+    generator: str
     params: List[Any] = Field(default_factory=list)
 
-class Schema(BaseModel):
+class ConfigSchema(BaseSchema, BaseModel):
+    """Schema implementation that can be created from a configuration"""
     fields: Dict[str, SchemaField]
 
     @classmethod
-    def from_dict(cls, schema_dict: Dict[str, str]) -> "Schema":
+    def from_dict(cls, schema_dict: Dict[str, str]) -> "ConfigSchema":
+        """Create a schema from a configuration dictionary"""
         fields = {}
-        for name, generator_str in schema_dict.items():
-            # Parse generator string like "$intrange(1, 100)" or "$string"
+        for name, generator_str in schema_dict.items():            
             match = re.match(r"\$(\w+)(?:\((.*)\))?", generator_str)
             if not match:
                 raise ValueError(f"Invalid generator format: {generator_str}")
@@ -47,11 +51,13 @@ class Schema(BaseModel):
                 raise ValueError(
                     f"Unsupported generator: {field.generator}. "
                     f"Supported generators are: {', '.join(supported_generators)}"
-                )            
-    
+                )                        
+
     def _generate_record(self) -> Dict[str, Any]:
+        """Generate a single record based on the schema"""
         record = {}
         for field_name, field in self.fields.items():
             generator = registry.get_generator(field.generator)            
             record[field_name] = generator()
         return record
+

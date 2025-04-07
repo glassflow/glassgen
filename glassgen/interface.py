@@ -1,8 +1,8 @@
 from typing import Dict, Any
-from pathlib import Path
-from .schema import Schema
-from .sinks import CSVSink, JSONSink, KafkaSink, BaseSink
-from .generator import Generator
+from glassgen.schema import BaseSchema
+from glassgen.schema.schema import ConfigSchema
+from glassgen.sinks import CSVSink, JSONSink, KafkaSink, BaseSink
+from glassgen.generator import Generator
 
 def create_sink(config: Dict[str, Any]) -> Any:
     """Create a sink based on the configuration"""
@@ -22,7 +22,7 @@ def create_sink(config: Dict[str, Any]) -> Any:
     else:
         raise ValueError(f"Unsupported sink type: {sink_type}")
 
-def generate(config: Dict[str, Any], sink: BaseSink = None) -> None:
+def generate(config: Dict[str, Any], schema: BaseSchema = None, sink: BaseSink = None) -> None:
     """
     Generate data based on the provided configuration.
     
@@ -47,8 +47,10 @@ def generate(config: Dict[str, Any], sink: BaseSink = None) -> None:
             }
     """
     # Create schema
-    schema = Schema.from_dict(config["schema"])
-    schema.validate()        
+    if schema is None:
+        schema = ConfigSchema.from_dict(config["schema"])
+        schema.validate()        
+    
     if sink is None:
         sink = create_sink(config)            
     # Create and run generator

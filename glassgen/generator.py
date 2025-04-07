@@ -1,9 +1,9 @@
 import time
-from .schema import Schema
-from .sinks import BaseSink
+from glassgen.schema import BaseSchema
+from glassgen.sinks import BaseSink
 
 class Generator:
-    def __init__(self, schema: Schema, sink: BaseSink):
+    def __init__(self, schema: BaseSchema, sink: BaseSink):
         self.schema = schema
         self.sink = sink        
 
