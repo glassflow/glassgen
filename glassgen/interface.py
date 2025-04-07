@@ -27,7 +27,7 @@ def generate(config: Union[Dict[str, Any], GlassGenConfig], schema: BaseSchema=N
     
     # Create sink if not provided
     if sink is None:
-        sink = SinkFactory.create(config.sink.type, config.sink.dict()) 
+        sink = SinkFactory.create(config.sink.type, config.sink.params) 
     
     # Create and run generator
     start_time = time.time()

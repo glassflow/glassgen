@@ -4,8 +4,8 @@ from typing import Any, Dict, List
 from glassgen.sinks.base import BaseSink
 
 class CSVSink(BaseSink):
-    def __init__(self, sink_config: dict):
-        filepath = sink_config["path"]
+    def __init__(self, sink_params: dict):
+        filepath = sink_params["path"]
         self.filepath = Path(filepath)
         self.writer = None
         self.file = None

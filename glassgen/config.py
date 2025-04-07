@@ -3,18 +3,7 @@ from pydantic import BaseModel, Field
 
 class SinkConfig(BaseModel):
     type: str
-    path: Optional[str] = None
-    bootstrap_servers: Optional[str] = None
-    topic: Optional[str] = None
-    security_protocol: Optional[str] = None
-    sasl_mechanism: Optional[str] = None
-    sasl_plain_username: Optional[str] = None
-    sasl_plain_password: Optional[str] = None
-    username: Optional[str] = None
-    password: Optional[str] = None
-    ssl_cafile: Optional[str] = None
-    ssl_certfile: Optional[str] = None
-    ssl_keyfile: Optional[str] = None
+    params: Optional[Dict[str, Any]] = None
 
 class GeneratorConfig(BaseModel):
     rps: int = Field(default=0, ge=0)
