@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 from glassgen.sinks.base import BaseSink
 from glassgen.sinks.kafka import BaseKafkaClient
 import socket
@@ -18,15 +18,18 @@ class ConfluentKafkaSink(BaseSink, BaseKafkaClient):
         """Get Confluent client configuration"""
         return {
             "bootstrap.servers": self.bootstrap_servers,
-            "security.protocol": "SASL_SSL",
-            "sasl.mechanisms": "PLAIN",
-            "sasl.username": self.username,
-            "sasl.password": self.password,
+            "security.protocol": self.sink_config['security_protocol'],
+            "sasl.mechanisms": self.sink_config['sasl_mechanism'],
+            "sasl.username": self.sink_config['sasl_plain_username'],
+            "sasl.password": self.sink_config['sasl_plain_password'],
             "client.id": socket.gethostname()
         }
     
     def publish(self, data: Dict[str, Any]) -> None:
         self.send_messages(self.topic, [data])
+
+    def publish_bulk(self, data: List[Dict[str, Any]]) -> None:
+        self.send_messages(self.topic, data)
 
     def close(self) -> None:
         pass
@@ -38,13 +41,16 @@ class AivenKafkaSink(BaseSink, BaseKafkaClient):
         bootstrap_servers = self.sink_config['bootstrap_servers']
         self.username = self.sink_config['username']
         self.password = self.sink_config['password']
-        self.ca_cert = self.sink_config['ca_cert']
+        self.ca_cert = self.sink_config['ssl_cafile']
         self.topic = self.sink_config['topic']
 
         super().__init__(bootstrap_servers)
         
     def publish(self, data: Dict[str, Any]) -> None:
         self.send_messages(self.topic, [data])
+
+    def publish_bulk(self, data: List[Dict[str, Any]]) -> None:
+        self.send_messages(self.topic, data)
 
     def close(self) -> None:
         pass
@@ -53,8 +59,8 @@ class AivenKafkaSink(BaseSink, BaseKafkaClient):
         """Get Aiven client configuration""" 
         return {
             "bootstrap.servers": self.bootstrap_servers,
-            "security.protocol": "SASL_SSL",
-            "sasl.mechanisms": "SCRAM-SHA-256",
+            "security.protocol": self.sink_config['security_protocol'],
+            "sasl.mechanisms": self.sink_config['sasl_mechanism'],
             "sasl.username": self.username,
             "sasl.password": self.password,
             "client.id": socket.gethostname(),            

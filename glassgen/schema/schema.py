@@ -60,4 +60,3 @@ class ConfigSchema(BaseSchema, BaseModel):
             generator = registry.get_generator(field.generator)            
             record[field_name] = generator()
         return record
-

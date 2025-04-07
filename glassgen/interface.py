@@ -1,33 +1,40 @@
-from typing import Dict, Any
+from typing import Dict, Any, Union
+import time
 from glassgen.schema import BaseSchema
 from glassgen.schema.schema import ConfigSchema
 from glassgen.sinks import SinkFactory, BaseSink
 from glassgen.generator import Generator
+from glassgen.config import GlassGenConfig
 
 
-def generate(config: Dict[str, Any], schema: BaseSchema=None, sink: BaseSink = None) -> None:
+def generate(config: Union[Dict[str, Any], GlassGenConfig], schema: BaseSchema=None, sink: BaseSink = None) -> None:
     """
     Generate data based on the provided configuration.
     
     Args:
-        config: Configuration dictionary
+        config: Configuration dictionary or GlassGenConfig object
         schema: Optional schema object to use for generating data
         sink: Optional sink object to use for sending generated data
     """
+    # Convert dict to Pydantic model if needed
+    if isinstance(config, dict):
+        config = GlassGenConfig(**config)
+    
     # Create schema if not provided
     if schema is None:
-        schema = ConfigSchema.from_dict(config["schema"])
-        schema.validate()    
+        schema = ConfigSchema.from_dict(config.schema_config)
+        schema.validate()
     
     # Create sink if not provided
     if sink is None:
-        sink = SinkFactory.create(config["sink"]["type"], config["sink"]) 
+        sink = SinkFactory.create(config.sink.type, config.sink.dict()) 
     
     # Create and run generator
-    generator = Generator(schema, sink)
-    generator_config = config["generator"]
-    
-    generator.generate(
-        count=generator_config["num_records"],
-        rate=generator_config.get("rps", 0)
-    ) 
+    start_time = time.time()
+    generator = Generator(config.generator, schema, sink)
+    generator.generate()
+    end_time = time.time()
+    print(f"Time taken: {round((end_time - start_time)*1000)} milliseconds")
+
+    # Close sink
+    sink.close()

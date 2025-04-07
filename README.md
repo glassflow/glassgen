@@ -9,12 +9,40 @@ GlassGen is a flexible synthetic data generation service that can generate data 
 - Configurable generation rate
 - Extensible sink architecture
 - CLI and Python SDK interfaces
-- MCP server for AI-assisted data generation
 
 ## Installation
 
 ```bash
 pip install glassgen
+```
+
+### Local Development Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/glassgen.git
+cd glassgen
+```
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+```
+
+3. Install the package in development mode:
+```bash
+pip install -e .
+```
+
+4. Install development dependencies:
+```bash
+pip install -r requirements-dev.txt
+```
+
+5. Run tests to verify installation:
+```bash
+pytest
 ```
 
 ## Usage
@@ -77,12 +105,33 @@ glassgen.generate(config=config)
 ```
 
 ### Kafka Sink
+GlassGen supports multiple Kafka sink types:
+
+1. **Confluent Cloud**
 ```json
 {
     "sink": {
-        "type": "kafka",
-        "bootstrap_servers": "localhost:9092",
-        "topic": "topic_name"
+        "type": "kafka.confluent",
+        "bootstrap_servers": "your-confluent-bootstrap-server",
+        "topic": "topic_name",
+        "security_protocol": "SASL_SSL",
+        "sasl_mechanism": "PLAIN",
+        "sasl_plain_username": "your-api-key",
+        "sasl_plain_password": "your-api-secret"
+    }
+}
+```
+
+2. **Aiven Kafka**
+```json
+{
+    "sink": {
+        "type": "kafka.aiven",
+        "bootstrap_servers": "your-aiven-bootstrap-server",
+        "topic": "topic_name",
+        "security_protocol": "SASL_SSL",
+        "sasl.mechanisms": "SCRAM-SHA-256",
+        "ssl_cafile": "path/to/ca.pem",        
     }
 }
 ```
@@ -146,30 +195,3 @@ glassgen.generate(config=config)
     }
 }
 ```
-
-## Extending GlassGen
-
-You can create custom sinks by implementing the `BaseSink` interface:
-
-```python
-from glassgen.sinks import BaseSink
-
-class CustomSink(BaseSink):
-    def publish(self, data):
-        # Implement your custom publishing logic
-        pass
-```
-
-## Development
-
-```bash
-# Install development dependencies
-pip install -e ".[dev]"
-
-# Run tests
-pytest
-
-# Format code
-black .
-isort .
-``` 

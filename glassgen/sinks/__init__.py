@@ -11,8 +11,8 @@ class SinkFactory:
     _sinks = {
         "csv": CSVSink,
         "json": JSONSink,
-        "confluent_kafka": ConfluentKafkaSink,
-        "aiven_kafka": AivenKafkaSink,
+        "kafka.confluent": ConfluentKafkaSink,
+        "kafka.aiven": AivenKafkaSink,
     }
 
     @classmethod
