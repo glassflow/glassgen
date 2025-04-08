@@ -1,0 +1,55 @@
+---
+title: Introduction
+order: 1
+---
+
+# Welcome to GlassGen
+
+GlassGen is a flexible synthetic data generation service that allows you to create realistic test data for your applications. It supports various data types and formats, making it easy to generate the data you need for testing and development.
+
+## Features
+
+- **Multiple Data Generators**: Generate various types of data including personal information, business data, and more
+- **Flexible Configuration**: Configure your data generation using simple JSON schemas
+- **Multiple Output Formats**: Support for various output formats including JSON, CSV, and webhooks
+- **Dynamic Batching**: Control the rate of data generation with dynamic batching
+- **Easy Integration**: Simple REST API for easy integration with your applications
+
+## Quick Start
+
+1. Install GlassGen:
+```bash
+pip install glassgen
+```
+
+2. Create a configuration file:
+```json
+{
+  "schema": {
+    "id": "$uuid",
+    "name": "$name",
+    "email": "$email",
+    "age": "$intrange(18,65)"
+  },
+  "output": {
+    "type": "json",
+    "path": "output.json"
+  }
+}
+```
+
+3. Run GlassGen:
+```bash
+glassgen generate --config config.json
+```
+
+## Documentation
+
+- [Getting Started](./getting-started)
+- [Generators](./generators)
+- [Configuration](./configuration)
+- [Examples](./examples)
+
+## Contributing
+
+We welcome contributions! Please check out our [GitHub repository](https://github.com/glassflow/glassgen) for more information. 

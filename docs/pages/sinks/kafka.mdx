@@ -1,0 +1,122 @@
+# Kafka Sink
+
+The Kafka sink sends generated data to Kafka topics. It's useful for:
+- Real-time data streaming
+- Event-driven architectures
+- Integration with Kafka-based data pipelines
+
+## Configuration
+
+GlassGen supports multiple Kafka sink types:
+
+### Confluent Cloud
+```json
+{
+  "sink": {
+    "type": "kafka.confluent",
+    "params": {
+      "bootstrap_servers": "your-confluent-bootstrap-server",
+      "topic": "topic_name",
+      "security_protocol": "SASL_SSL",
+      "sasl_mechanism": "PLAIN",
+      "sasl_plain_username": "your-api-key",
+      "sasl_plain_password": "your-api-secret"
+    }
+  }
+}
+```
+
+### Aiven Kafka
+```json
+{
+  "sink": {
+    "type": "kafka.aiven",
+    "params": {
+      "bootstrap_servers": "your-aiven-bootstrap-server",
+      "topic": "topic_name",
+      "security_protocol": "SASL_SSL",
+      "sasl.mechanisms": "SCRAM-SHA-256",
+      "ssl_cafile": "path/to/ca.pem"
+    }
+  }
+}
+```
+
+## Examples
+
+### Confluent Cloud Usage
+```json
+{
+  "schema": {
+    "id": "$uuid",
+    "name": "$name",
+    "email": "$email",
+    "timestamp": "$timestamp"
+  },
+  "sink": {
+    "type": "kafka.confluent",
+    "params": {
+      "bootstrap_servers": "kafka1:9092,kafka2:9092",
+      "topic": "user_events",
+      "security_protocol": "SASL_SSL",
+      "sasl_mechanism": "PLAIN",
+      "sasl_plain_username": "your-api-key",
+      "sasl_plain_password": "your-api-secret"
+    }
+  }
+}
+```
+
+### Aiven Kafka Usage
+```json
+{
+  "schema": {
+    "id": "$uuid",
+    "name": "$name",
+    "email": "$email",
+    "timestamp": "$timestamp"
+  },
+  "sink": {
+    "type": "kafka.aiven",
+    "params": {
+      "bootstrap_servers": "kafka1:9092,kafka2:9092",
+      "topic": "user_events",
+      "security_protocol": "SASL_SSL",
+      "sasl.mechanisms": "SCRAM-SHA-256",
+      "ssl_cafile": "path/to/ca.pem"
+    }
+  }
+}
+```
+
+## Message Format
+
+Messages are sent as JSON strings with the following structure:
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "timestamp": 1710503445
+}
+```
+
+## Security
+
+For secure Kafka clusters, you can configure SSL and SASL authentication:
+
+```json
+{
+  "output": {
+    "type": "kafka",
+    "bootstrap_servers": "kafka1:9092",
+    "topic": "secure_topic",
+    "security_protocol": "SASL_SSL",
+    "sasl_mechanism": "PLAIN",
+    "sasl_plain_username": "username",
+    "sasl_plain_password": "password",
+    "ssl_cafile": "/path/to/ca.pem"
+  }
+}
+``` 

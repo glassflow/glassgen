@@ -1,0 +1,38 @@
+# Sinks
+
+Sinks in GlassGen are destinations where the generated data can be sent. Each sink type has its own configuration options and use cases.
+
+## Available Sinks
+
+- [JSON Sink](./json) - Write data to JSON files
+- [CSV Sink](./csv) - Write data to CSV files
+- [Kafka Sink](./kafka) - Send data to Kafka topics
+- [Webhook Sink](./webhook) - Send data to HTTP endpoints
+
+## Common Configuration
+
+All sinks share a common configuration structure:
+
+```json
+{
+  "sink": {
+    "type": "sink_type",
+    "params": {
+      // sink-specific parameters
+    }
+  }
+}
+```
+
+The `type` field specifies which sink to use, and the `params` object contains the sink-specific configuration options.
+
+## Choosing a Sink
+
+When choosing a sink, consider:
+
+1. **Data Format**: Do you need JSON, CSV, or another format?
+2. **Destination**: Where does the data need to go? (file system, message queue, HTTP endpoint)
+3. **Performance**: What are your throughput requirements?
+4. **Integration**: How will the data be consumed by downstream systems?
+
+Select a sink from the list above to learn more about its specific configuration and use cases. 

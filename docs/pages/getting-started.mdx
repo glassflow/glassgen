@@ -1,0 +1,88 @@
+---
+title: Getting Started
+order: 2
+---
+
+# Getting Started
+
+## Installation
+
+### Using pip
+
+```bash
+pip install glassgen
+```
+
+### Local Development Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/glassflow/glassgen.git
+cd glassgen
+```
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+```
+
+3. Install the package in development mode:
+```bash
+pip install -e .
+```
+
+4. Install development dependencies:
+```bash
+pip install -r requirements-dev.txt
+```
+
+5. Run tests to verify installation:
+```bash
+pytest
+```
+
+## Basic Usage
+
+### Python SDK
+
+```python
+import glassgen
+import json
+
+# Load configuration from file
+with open("config.json") as f:
+    config = json.load(f)
+
+# Start the generator
+glassgen.generate(config=config)
+```
+
+### Configuration File
+
+Create a `config.json` file with the following structure:
+
+```json
+{
+    "schema": {
+        "field1": "$generator_type",
+        "field2": "$generator_type(param1, param2)"
+    },
+    "sink": {
+        "type": "csv|kafka|webhook",
+        "params": {
+            // sink-specific parameters
+        }
+    },
+    "generator": {
+        "rps": 1000,  // records per second
+        "num_records": 5000  // total number of records to generate
+    }
+}
+```
+
+## Next Steps
+
+- Learn about [available generators](/generators)
+- Explore [sink options](/sinks)
+- Check out [example configurations](/examples) 

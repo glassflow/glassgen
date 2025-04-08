@@ -1,0 +1,52 @@
+# CSV Sink
+
+The CSV sink writes generated data to CSV files. It's useful for:
+- Importing data into spreadsheets
+- Integration with data analysis tools
+- Creating datasets for machine learning
+
+## Configuration
+
+```json
+{
+  "sink": {
+    "type": "csv",
+    "params": {
+      "path": "output.csv"
+    }
+  }
+}
+```
+
+### Configuration Options
+
+- `path` (required): The path where the CSV file will be written
+
+## Examples
+
+### Basic Usage
+```json
+{
+  "schema": {
+    "id": "$uuid",
+    "name": "$name",
+    "email": "$email",
+    "age": "$intrange(18,65)"
+  },
+  "sink": {
+    "type": "csv",
+    "params": {
+      "path": "users.csv"
+    }
+  }
+}
+```
+
+## Output Examples
+
+### Standard CSV
+```csv
+id,name,email,age
+550e8400-e29b-41d4-a716-446655440000,John Doe,john.doe@example.com,32
+6ba7b810-9dad-11d1-80b4-00c04fd430c8,Jane Smith,jane.smith@example.com,28
+``` 

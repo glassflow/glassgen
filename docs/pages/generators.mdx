@@ -1,0 +1,232 @@
+---
+title: Data Generators
+order: 3
+---
+
+# Data Generators
+
+GlassGen provides a variety of data generators to create synthetic data. Each generator can be used in the schema configuration using the `$generator_type` syntax.
+
+## Basic Types
+
+### String Generator
+```json
+{
+    "field": "$string"
+}
+```
+Generates a random string.
+
+### Integer Generator
+```json
+{
+    "field": "$int"
+}
+```
+Generates a random integer.
+
+### Integer Range Generator
+```json
+{
+    "field": "$intrange(1,100)"
+}
+```
+Generates a random integer within the specified range (inclusive).
+
+### Choice Generator
+```json
+{
+    "field": "$choice(red,blue,green)"
+}
+```
+Randomly picks one value from the provided list.
+
+### Datetime Generator
+```json
+{
+    "field": "$datetime"
+}
+```
+Generates current timestamp in ISO format (e.g., "2024-03-15T14:30:45.123456").
+
+### Timestamp Generator
+```json
+{
+    "field": "$timestamp"
+}
+```
+Generates current Unix timestamp in seconds since epoch (e.g., 1710503445).
+
+### Boolean Generator
+```json
+{
+    "field": "$boolean"
+}
+```
+Generates a random boolean value.
+
+### UUID Generators
+```json
+{
+    "field": "$uuid"
+}
+```
+Generates a random UUID.
+
+```json
+{
+    "field": "$uuid4"
+}
+```
+Generates a random UUID4.
+
+## Personal Information
+
+### Name Generator
+```json
+{
+    "field": "$name"
+}
+```
+Generates a random full name.
+
+### Email Generators
+```json
+{
+    "field": "$email"
+}
+```
+Generates a random email address.
+
+```json
+{
+    "field": "$company_email"
+}
+```
+Generates a random company email.
+
+### Username Generator
+```json
+{
+    "field": "$user_name"
+}
+```
+Generates a random username.
+
+### Password Generator
+```json
+{
+    "field": "$password"
+}
+```
+Generates a random password.
+
+### Phone Number Generator
+```json
+{
+    "field": "$phone_number"
+}
+```
+Generates a random phone number.
+
+### SSN Generator
+```json
+{
+    "field": "$ssn"
+}
+```
+Generates a random Social Security Number.
+
+## Location
+
+### Country Generator
+```json
+{
+    "field": "$country"
+}
+```
+Generates a random country name.
+
+### City Generator
+```json
+{
+    "field": "$city"
+}
+```
+Generates a random city name.
+
+### Address Generator
+```json
+{
+    "field": "$address"
+}
+```
+Generates a random street address.
+
+### Zipcode Generator
+```json
+{
+    "field": "$zipcode"
+}
+```
+Generates a random zip code.
+
+## Business
+
+### Company Generator
+```json
+{
+    "field": "$company"
+}
+```
+Generates a random company name.
+
+### Job Generator
+```json
+{
+    "field": "$job"
+}
+```
+Generates a random job title.
+
+### URL Generator
+```json
+{
+    "field": "$url"
+}
+```
+Generates a random URL.
+
+## Other
+
+### Text Generator
+```json
+{
+    "field": "$text"
+}
+```
+Generates a random text paragraph.
+
+### IPv4 Generator
+```json
+{
+    "field": "$ipv4"
+}
+```
+Generates a random IPv4 address.
+
+### Currency Name Generator
+```json
+{
+    "field": "$currency_name"
+}
+```
+Generates a random currency name.
+
+### Color Name Generator
+```json
+{
+    "field": "$color_name"
+}
+```
+Generates a random color name. 
