@@ -34,6 +34,7 @@ class GeneratorType(str, Enum):
     CURRENCY_NAME = "currency_name"
     COLOR_NAME = "color_name"
     COMPANY_EMAIL = "company_email"
+    GREETING = "greeting"
 
 def choice_generator(choices: List[str]) -> str:
     """Generate a random choice from a list of strings"""
@@ -42,6 +43,10 @@ def choice_generator(choices: List[str]) -> str:
 def intrange_generator(min_val: int, max_val: int) -> int:
     """Generate a random integer between min_val and max_val"""
     return random.randint(min_val, max_val)
+
+def greeting_generator() -> str:
+    """Generate a random greeting from a list of strings"""
+    return random.choice(["Hello", "Hi", "Hey", "Greetings", "Welcome"])
 
 class GeneratorRegistry:
     """Registry for data generators"""
@@ -80,6 +85,7 @@ class GeneratorRegistry:
             GeneratorType.CURRENCY_NAME: self._faker.currency_name,
             GeneratorType.COLOR_NAME: self._faker.color_name,
             GeneratorType.COMPANY_EMAIL: self._faker.company_email,
+            GeneratorType.GREETING: greeting_generator,
         }
 
     def register_generator(self, name: str, generator: Callable[..., Any]) -> None:

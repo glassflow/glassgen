@@ -2,10 +2,6 @@ import time
 from glassgen.schema import BaseSchema
 from glassgen.sinks import BaseSink
 from glassgen.config import GeneratorConfig
-import time
-from collections import deque
-from threading import Lock
-import time
 
 class DynamicBatchController:
     def __init__(self, target_rps: int):
