@@ -1,9 +1,6 @@
 faker>=19.0.0
 click>=8.1.7
 pydantic>=2.0.0
-kafka-python>=2.0.0
-fastapi>=0.100.0
-uvicorn>=0.23.0
 pyyaml>=6.0.0
 confluent-kafka==2.8.2
 aws-msk-iam-sasl-signer-python==1.0.2

@@ -1,6 +1,6 @@
 # a user schema that generates a simulated user profile
 import random
-from typing import Dict, Any, List  
+from typing import Dict, Any
 from glassgen.schema.base import BaseSchema
 from glassgen.generators import registry, GeneratorType
 

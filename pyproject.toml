@@ -3,18 +3,37 @@ name = "glassgen"
 version = "0.1.0"
 description = "A flexible synthetic data generation service"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"},
+    {name = "GlassFlow", email = "hello@glassflow.dev"},
 ]
 dependencies = [
     "faker>=19.0.0",
     "click>=8.0.0",
-    "pydantic>=2.0.0",
-    "kafka-python>=2.0.0",
-    "fastapi>=0.100.0",
-    "uvicorn>=0.23.0",
+    "pydantic>=2.0.0",    
+    "confluent-kafka==2.8.2",
+    "requests>=2.25.0",
+    "urllib3<2.0.0"  # Pin to version 1.x to avoid SSL warning
 ]
 requires-python = ">=3.8"
 readme = "README.md"
+license = {text = "MIT"}
+keywords = ["data-generation", "synthetic-data", "kafka", "csv", "testing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/glassflow/glassgen"
+Documentation = "https://glassflow.github.io/glassgen"
+Repository = "https://github.com/glassflow/glassgen.git"
+Issues = "https://github.com/glassflow/glassgen/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -29,4 +48,23 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-glassgen = "cli:cli" 
+glassgen = "cli:cli"
+
+[tool.hatch.build.targets.wheel]
+include-paths = [
+    "glassgen/",
+    "cli.py",
+    "README.md",
+    "LICENSE"
+] 
+
+[tool.hatch.build]
+exclude = [
+    "docs",
+    "tests",
+    "secrets",
+    ".venv",
+    "*.json",
+    "*.yml",
+    "*.yaml"
+]

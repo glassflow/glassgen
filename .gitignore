@@ -4,3 +4,5 @@ __pycache__/
 config.*.json
 secrets/
 examples/config.kafka.json
+dist/
+build/

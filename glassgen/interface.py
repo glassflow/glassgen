@@ -34,7 +34,9 @@ def generate(config: Union[Dict[str, Any], GlassGenConfig], schema: BaseSchema=N
     generator = Generator(config.generator, schema, sink)
     generator.generate()
     end_time = time.time()
-    print(f"Time taken: {round((end_time - start_time)*1000)} milliseconds")
+    time_taken_ms = round((end_time - start_time)*1000)
+    #print(f"Time taken: {time_taken_ms} milliseconds")
+    print(f"Generated {config.generator.num_records} records and published to {config.sink.type} in {time_taken_ms} milliseconds")
 
     # Close sink
     sink.close()

@@ -1,4 +1,3 @@
-import json
 import requests
 from typing import List, Dict, Any
 from .base import BaseSink

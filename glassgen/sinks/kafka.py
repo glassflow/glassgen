@@ -1,19 +1,7 @@
-from confluent_kafka.admin import (
-    AdminClient,
-    NewTopic,
-    KafkaError,
-    KafkaException,
-    TopicMetadata
-)
 from confluent_kafka import Producer
-from aws_msk_iam_sasl_signer import MSKAuthTokenProvider
-
 import json
-import os
-import socket
 import time
-from typing import Dict, List, Optional
-import ssl
+from typing import Dict, List
 
 class BaseKafkaClient:
     """Base class for Kafka clients with common functionality"""

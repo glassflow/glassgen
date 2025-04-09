@@ -88,7 +88,7 @@ class Generator:
             actual_batch_size = min(batch_size, events_to_send - count)
             records = self._generate_batch(actual_batch_size)
             count += len(records)
-            print(f"Generated {len(records)}. Total records generated: {count} out of {events_to_send}")
+            #print(f"Generated {len(records)}. Total records generated: {count} out of {events_to_send}")
             if len(records) > 1:
                 self.sink.publish_bulk(records)
             else:
