@@ -217,3 +217,28 @@ GlassGen supports multiple Kafka sink types:
     }
 }
 ```
+
+## Creating a New Release
+
+To create a new release:
+
+1. Make sure you have the release script installed:
+```bash
+pip install -e .
+```
+
+2. Run the release script with the new version:
+```bash
+./scripts/release.py release 0.1.1
+```
+
+This will:
+- Update the version in pyproject.toml
+- Create a git tag
+- Push the changes
+- Trigger the GitHub Actions workflow to:
+  - Build the package
+  - Publish to PyPI
+  - Create a GitHub release
+
+The version must follow semantic versioning (X.Y.Z format).
