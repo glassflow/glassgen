@@ -223,6 +223,30 @@ generate(config, sink=PrintSink())
 - `$currency_name`: Random currency name
 - `$color_name`: Random color name
 
+
+### Pre Defined Schema
+You can use of of the pre-defined schema:
+
+```python
+import glassgen
+from glassgen.schema.user_schema import UserSchema
+
+config = {
+    "sink": {
+        "type": "csv",
+        "params": {
+            "path": "output.csv"
+        }
+    },
+    "generator": {
+        "rps": 50,
+        "num_records": 100
+    }
+}
+# use the pre-defined UserSchema
+glassgen.generate(config=config, schema=UserSchema())
+```
+
 ## Example Configuration
 
 ```json

@@ -48,8 +48,8 @@ class GeneratorConfig(BaseModel):
     event_options: EventOptions = Field(default=EventOptions())
     model_config = {"extra": "forbid"}
 
-class GlassGenConfig(BaseModel):
-    schema_config: Dict[str, Any] = Field(alias="schema")    
+class GlassGenConfig(BaseModel):    
+    schema_config: Optional[Dict[str, Any]] = Field(alias="schema", default=None)    
     sink: Optional[SinkConfig] = None
     generator: GeneratorConfig 
     model_config = {"extra": "forbid"}
