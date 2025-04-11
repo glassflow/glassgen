@@ -49,8 +49,8 @@ class GeneratorConfig(BaseModel):
     model_config = {"extra": "forbid"}
 
 class GlassGenConfig(BaseModel):
-    schema_config: Dict[str, Any] = Field(alias="schema")
-    sink: SinkConfig
+    schema_config: Dict[str, Any] = Field(alias="schema")    
+    sink: Optional[SinkConfig] = None
     generator: GeneratorConfig 
     model_config = {"extra": "forbid"}
 

@@ -149,6 +149,41 @@ GlassGen supports multiple Kafka sink types:
 }
 ```
 
+### Custom Sink
+You can create your own sink by extending the `BaseSink` class:
+
+```python
+from glassgen import generate
+from glassgen.sinks import BaseSink
+from typing import List
+
+class PrintSink(BaseSink):
+    def publish(self, data: str):
+        print(data)
+    
+    def publish_bulk(self, data: List[str]):
+        for d in data:
+            self.publish(d)
+    
+    def close(self):
+        pass
+
+# Use your custom sink
+config = {
+    "schema": {
+        "name": "$name",
+        "email": "$email",
+        "country": "$country",
+        "id": "$uuid",        
+    },    
+    "generator": {
+        "rps": 10,
+        "num_records": 1000        
+    }
+}
+generate(config, sink=PrintSink())
+```
+
 ## Supported Schema Generators
 
 ### Basic Types
