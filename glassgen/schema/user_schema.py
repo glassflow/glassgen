@@ -2,7 +2,7 @@
 import random
 from typing import Dict, Any
 from glassgen.schema.base import BaseSchema
-from glassgen.generators import registry, GeneratorType
+from glassgen.generator.generators import registry, GeneratorType
 
 
 class UserSchema(BaseSchema):

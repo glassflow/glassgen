@@ -1,7 +1,7 @@
 import re
 from typing import Any, Dict, List
 from pydantic import BaseModel, Field
-from glassgen.generators import GeneratorType, registry
+from glassgen.generator.generators import GeneratorType, registry
 from glassgen.schema.base import BaseSchema
 
 

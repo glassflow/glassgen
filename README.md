@@ -213,10 +213,46 @@ GlassGen supports multiple Kafka sink types:
     },
     "generator": {
         "rps": 1500,
-        "num_records": 5000
+        "num_records": 5000,
+        "event_options": {
+            "duplication": {
+                "enabled": true,
+                "ratio": 0.1,
+                "key_field": "email",
+                "time_window": "1h"
+            }
+        }
     }
 }
 ```
+
+## Event Options
+
+### Duplication
+
+GlassGen supports controlled event duplication to simulate real-world scenarios where the same event might be processed multiple times.
+
+```json
+"event_options": {
+    "duplication": {
+        "enabled": true,        // Enable/disable duplication
+        "ratio": 0.1,          // Target ratio of duplicates (0.0 to 1.0)
+        "key_field": "email",  // Field to use for duplicate detection
+        "time_window": "1h"    // Time window for duplicate detection
+    }
+}
+```
+
+- `enabled`: Boolean to turn duplication on/off
+- `ratio`: Decimal value (0.0 to 1.0) representing the percentage of events that should be duplicates
+- `key_field`: Field name from the schema to use for identifying duplicates
+- `time_window`: String representing the time window for duplicate detection (e.g., "1h" for 1 hour, "30m" for 30 minutes)
+
+The duplication feature:
+- Maintains the specified ratio across all generated events
+- Only considers events within the configured time window for duplication
+- Uses the specified key_field to identify potential duplicates
+- Ensures memory efficiency by automatically cleaning up old events
 
 ## Creating a New Release
 
