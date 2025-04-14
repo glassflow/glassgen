@@ -1,5 +1,4 @@
 from typing import Dict, Any, Union
-import time
 from glassgen.schema import BaseSchema
 from glassgen.schema.schema import ConfigSchema
 from glassgen.sinks import SinkFactory, BaseSink
@@ -7,7 +6,7 @@ from glassgen.generator import Generator
 from glassgen.config import GlassGenConfig, validate_config, ConfigError
 
 
-def generate(config: Union[Dict[str, Any], GlassGenConfig], schema: BaseSchema=None, sink: BaseSink = None) -> None:
+def generate(config: Union[Dict[str, Any], GlassGenConfig], schema: BaseSchema=None, sink: BaseSink = None) -> Dict[str, Any]:
     """
     Generate data based on the provided configuration.
     
@@ -43,3 +42,4 @@ def generate(config: Union[Dict[str, Any], GlassGenConfig], schema: BaseSchema=N
 
     # Close sink
     sink.close()
+    return results
