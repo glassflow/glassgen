@@ -63,3 +63,10 @@ class DuplicateController:
         # Trim to max size
         if len(self.duplicates) > self.max_size:
             self.duplicates.popleft()
+
+    def get_results(self):
+        return {
+            "total_generated": self.total_generated,
+            "total_duplicates": self.total_duplicates,
+            "duplication_ratio": round(self.total_duplicates / max(1, self.total_generated), 2)
+        }

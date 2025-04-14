@@ -1,3 +1,5 @@
+import time
+from typing import Dict, Any
 from glassgen.generator.batch_controller import DynamicBatchController
 from glassgen.schema import BaseSchema
 from glassgen.sinks import BaseSink
@@ -33,10 +35,11 @@ class Generator:
             records.append(record)
         return records
 
-    def generate(self) -> None:
+    def generate(self) -> Dict[str, Any]:
         """
         Generate records and publish them to the sink.    
         """
+        start_time = time.time()
         count = 0
         events_to_send = self.generator_config.num_records
         if events_to_send == -1:
@@ -64,3 +67,11 @@ class Generator:
                 
             if count >= events_to_send:
                 break
+        
+        response = {
+            "time_taken_ms": round((time.time() - start_time)*1000),
+            "num_records": count
+        }
+        if self.duplicate_controller:
+            response.update(self.duplicate_controller.get_results())
+        return response

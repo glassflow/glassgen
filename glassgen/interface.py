@@ -35,14 +35,11 @@ def generate(config: Union[Dict[str, Any], GlassGenConfig], schema: BaseSchema=N
     if sink is None:
         sink = SinkFactory.create(config.sink.type, config.sink.params) 
     
-    # Create and run generator
-    start_time = time.time()
+    # Create and run generator    
     generator = Generator(config.generator, schema, sink)
-    generator.generate()
-    end_time = time.time()
-    time_taken_ms = round((end_time - start_time)*1000)
-    #print(f"Time taken: {time_taken_ms} milliseconds")
-    print(f"Generated {config.generator.num_records} records and published to {config.sink.type} in {time_taken_ms} milliseconds")
+    results = generator.generate()        
+    results['sink'] = config.sink.type
+    print(results)
 
     # Close sink
     sink.close()
