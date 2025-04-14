@@ -1,6 +1,6 @@
 [project]
 name = "glassgen"
-version = "0.1.5"
+version = "0.1.6"
 description = "A flexible synthetic data generation service"
 authors = [
     {name = "GlassFlow", email = "hello@glassflow.dev"},
