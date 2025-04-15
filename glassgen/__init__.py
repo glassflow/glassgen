@@ -1,4 +1,4 @@
-from .generator import Generator
+from .generator import Generator, GeneratorRegistry
 from .schema import BaseSchema, ConfigSchema, UserSchema
 from .sinks import SinkFactory, BaseSink
 from .interface import generate
@@ -13,4 +13,5 @@ __all__ = [
     "SinkFactory",
     "BaseSink",
     "generate",
+    "GeneratorRegistry"
 ] 
