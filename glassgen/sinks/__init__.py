@@ -3,8 +3,9 @@ from glassgen.sinks.csv_sink import CSVSink
 from glassgen.sinks.kafka_sink import ConfluentKafkaSink
 from glassgen.sinks.kafka_sink import AivenKafkaSink
 from glassgen.sinks.webhook_sink import WebHookSink
+from glassgen.sinks.yield_sink import YieldSink
 
-__all__ = ["BaseSink", "CSVSink", "SinkFactory", "ConfluentKafkaSink", "AivenKafkaSink", "WebHookSink"]
+__all__ = ["BaseSink", "CSVSink", "SinkFactory", "ConfluentKafkaSink", "AivenKafkaSink", "WebHookSink", "YieldSink"]
 
 
 class SinkFactory:
@@ -13,6 +14,7 @@ class SinkFactory:
         "kafka.confluent": ConfluentKafkaSink,
         "kafka.aiven": AivenKafkaSink,
         "webhook": WebHookSink,
+        "yield": YieldSink,
     }
 
     @classmethod

@@ -70,7 +70,7 @@ glassgen.generate(config=config)
         "field2": "$generator_type(param1, param2)"
     },
     "sink": {
-        "type": "csv|kafka|webhook",
+        "type": "csv|kafka.aiven|kafka.confluent|webhook|yield",
         "params": {
             // sink-specific parameters
         }
@@ -126,8 +126,8 @@ GlassGen supports multiple Kafka sink types:
             "topic": "topic_name",
             "security_protocol": "SASL_SSL",
             "sasl_mechanism": "PLAIN",
-            "sasl_plain_username": "your-api-key",
-            "sasl_plain_password": "your-api-secret"
+            "username": "your-api-key",
+            "password": "your-api-secret"
         }
     }
 }
@@ -143,11 +143,44 @@ GlassGen supports multiple Kafka sink types:
             "topic": "topic_name",
             "security_protocol": "SASL_SSL",
             "sasl.mechanisms": "SCRAM-SHA-256",
+            "username": "username",
+            "password": "password",
             "ssl_cafile": "path/to/ca.pem"
         }
     }
 }
 ```
+### Yield Sink
+Yield sink returns an iterator for the generated events
+```json
+{
+    "sink" : {
+        "type": "yield"
+    }
+}
+```
+#### Usage 
+```python
+config = {
+    "schema": {
+        "name": "$name",        
+        "email": "$email"
+    },
+    "sink": {
+        "type": "yield"
+    },
+    "generator": {
+        "rps": 100,
+        "num_records": 1000
+    }
+}  
+
+import glassgen
+gen = glassgen.generate(config=config)
+for item in gen:
+    print(item)
+```
+
 
 ### Custom Sink
 You can create your own sink by extending the `BaseSink` class:

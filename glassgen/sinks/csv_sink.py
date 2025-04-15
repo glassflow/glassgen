@@ -1,12 +1,17 @@
 import csv
 from pathlib import Path
 from typing import Any, Dict, List
+from pydantic import BaseModel, Field
 from glassgen.sinks.base import BaseSink
 
+
+class CSVSinkParams(BaseModel):
+    path: str = Field(..., description="Path to the output CSV file")
+
 class CSVSink(BaseSink):
-    def __init__(self, sink_params: dict):
-        filepath = sink_params["path"]
-        self.filepath = Path(filepath)
+    def __init__(self, sink_params: Dict[str, Any]):
+        params = CSVSinkParams.model_validate(sink_params)
+        self.filepath = Path(params.path)
         self.writer = None
         self.file = None
         self.fieldnames = None

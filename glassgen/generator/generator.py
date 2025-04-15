@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Any
+from typing import Dict, Any, List
 from glassgen.generator.batch_controller import DynamicBatchController
 from glassgen.schema import BaseSchema
 from glassgen.sinks import BaseSink
@@ -8,10 +8,9 @@ from glassgen.generator.duplication import DuplicateController
 
 
 class Generator:
-    def __init__(self, generator_config: GeneratorConfig, schema: BaseSchema, sink: BaseSink):
+    def __init__(self, generator_config: GeneratorConfig, schema: BaseSchema):
         self.generator_config = generator_config
         self.schema = schema
-        self.sink = sink
         self.batch_controller = (
             DynamicBatchController(self.generator_config.rps) if self.generator_config.rps > 0 else None
         )
@@ -22,7 +21,7 @@ class Generator:
             else None
         )
         
-    def _generate_batch(self, num_records: int):        
+    def _generate_batch(self, num_records: int) -> List[Dict[str, Any]]:        
         records = []
         for _ in range(num_records):
             record = None
@@ -35,7 +34,7 @@ class Generator:
             records.append(record)
         return records
 
-    def generate(self) -> Dict[str, Any]:
+    def generate(self):
         """
         Generate records and publish them to the sink.    
         """
@@ -57,11 +56,8 @@ class Generator:
             records = self._generate_batch(actual_batch_size)
             count += len(records)
             
-            if len(records) > 1:
-                self.sink.publish_bulk(records)
-            else:
-                self.sink.publish(records[0])
-            
+            yield records
+
             if self.batch_controller:
                 self.batch_controller.record_sent(actual_batch_size)
                 

@@ -1,6 +1,14 @@
 import requests
 from typing import List, Dict, Any
+from pydantic import BaseModel, Field
 from .base import BaseSink
+
+
+class WebHookSinkParams(BaseModel):
+    url: str = Field(..., description="Webhook URL to send data to")
+    headers: Dict[str, str] = Field(default_factory=dict, description="HTTP headers for the request")
+    timeout: int = Field(default=30, ge=1, description="Request timeout in seconds")
+
 
 class WebHookSink(BaseSink):
     """
@@ -19,12 +27,10 @@ class WebHookSink(BaseSink):
                     "timeout": int (optional, defaults to 30)
                 }
         """
-        self.url = sink_params.get("url")
-        if not self.url:
-            raise ValueError("Webhook URL is required in sink configuration")
-            
-        self.headers = sink_params.get("headers", {})
-        self.timeout = sink_params.get("timeout", 30)
+        params = WebHookSinkParams.model_validate(sink_params)
+        self.url = params.url
+        self.headers = params.headers
+        self.timeout = params.timeout
         
         # Ensure content-type is set
         if 'Content-Type' not in self.headers:
