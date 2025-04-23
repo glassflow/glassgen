@@ -17,6 +17,12 @@ class ConfigSchema(BaseSchema, BaseModel):
     @classmethod
     def from_dict(cls, schema_dict: Dict[str, str]) -> "ConfigSchema":
         """Create a schema from a configuration dictionary"""
+        fields = cls._generate_schema_fields(schema_dict)
+        return cls(fields=fields)
+    
+    @staticmethod
+    def _generate_schema_fields(schema_dict: Dict[str, str]) -> Dict[str, SchemaField]:
+        """Generate schema fields from a configuration dictionary"""
         fields = {}
         for name, generator_str in schema_dict.items():            
             match = re.match(r"\$(\w+)(?:\((.*)\))?", generator_str)
@@ -44,9 +50,8 @@ class ConfigSchema(BaseSchema, BaseModel):
                 generator=generator_name,
                 params=params
             )
-        
-        return cls(fields=fields)
-
+        return fields
+    
     def validate(self) -> None:
         """Validate that all generators are supported"""
         supported_generators = set(registry.get_supported_generators().keys())
