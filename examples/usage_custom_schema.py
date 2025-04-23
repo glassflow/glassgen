@@ -1,10 +1,16 @@
-# usage of a custom sink
 import glassgen
-import json
 from glassgen.schema.user_schema import UserSchema
+config = {
+   "sink": {
+        "type": "csv",
+        "params": {
+            "path": "output.csv"
+        }
+    },
+    "generator": {
+        "rps": 1500,
+        "num_records": 5000
+    }
+}
 
-with open("config.json") as f:
-    config_json = json.load(f)
-
-print(f"Config: {config_json}")
-glassgen.generate(config=config_json, schema=UserSchema())
+print(glassgen.generate(config=config, schema=UserSchema()))

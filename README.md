@@ -40,11 +40,6 @@ pip install -e .
 pip install -r requirements-dev.txt
 ```
 
-5. Run tests to verify installation:
-```bash
-pytest
-```
-
 ## Usage
 
 ### Basic Usage

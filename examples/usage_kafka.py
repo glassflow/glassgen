@@ -1,9 +1,30 @@
-# usage of a custom sink
 import glassgen
-import json
-from glassgen.schema import UserSchema
 
-with open("config.kafka.json") as f:
-    config_json = json.load(f)
+config = {
+    "schema": {
+        "name": "$name",        
+        "email": "$email",
+        "country": "$country",
+        "id": "$uuid",
+        "address": "$address",
+        "phone": "$phone_number",
+        "job": "$job",
+        "company": "$company"
+    },
+    "sink": {
+        "type": "kafka.aiven",
+        "bootstrap_servers": "broker.h.aivencloud.com:12766",
+        "username": "default",
+        "password": "******",
+        "ssl_cafile": "ca.pem",
+        "topic": "example",
+        "security_protocol": "SASL_SSL",
+        "sasl_mechanism": "SCRAM-SHA-256"                
+    },
+    "generator": {
+        "rps": 1500,
+        "num_records": 50
+    }
+} 
 
-glassgen.generate(config=config_json, schema=UserSchema())
+print(glassgen.generate(config=config))
