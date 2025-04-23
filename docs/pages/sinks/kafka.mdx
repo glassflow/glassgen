@@ -101,22 +101,3 @@ Messages are sent as JSON strings with the following structure:
   "timestamp": 1710503445
 }
 ```
-
-## Security
-
-For secure Kafka clusters, you can configure SSL and SASL authentication:
-
-```json
-{
-  "output": {
-    "type": "kafka",
-    "bootstrap_servers": "kafka1:9092",
-    "topic": "secure_topic",
-    "security_protocol": "SASL_SSL",
-    "sasl_mechanism": "PLAIN",
-    "sasl_plain_username": "username",
-    "sasl_plain_password": "password",
-    "ssl_cafile": "/path/to/ca.pem"
-  }
-}
-``` 

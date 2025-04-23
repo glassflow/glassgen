@@ -9,11 +9,13 @@ GlassGen is a flexible synthetic data generation service that allows you to crea
 
 ## Features
 
-- **Multiple Data Generators**: Generate various types of data including personal information, business data, and more
+- **Multiple Data Generators**: Generate various types of data including personal information, business data, and more. Extend with custom generators using the [custom schema example](/examples/usage_custom_schema)
 - **Flexible Configuration**: Configure your data generation using simple JSON schemas
-- **Multiple Output Formats**: Support for various output formats including JSON, CSV, and webhooks
-- **Dynamic Batching**: Control the rate of data generation with dynamic batching
-- **Easy Integration**: Simple REST API for easy integration with your applications
+- **Multiple Output Sinks**: Support for various output sinks including CSV Files, Kafka (Confluent and Aiven), Webhook, and custom sinks
+- **Rate Control**: Fine-tune data generation with configurable records per second (RPS)
+- **Special Operators**: Advanced features like controlled event duplication to simulate real-world scenarios
+- **Extensible Architecture**: Create custom generators and sinks to meet your specific needs
+
 
 ## Quick Start
 
@@ -31,16 +33,63 @@ pip install glassgen
     "email": "$email",
     "age": "$intrange(18,65)"
   },
-  "output": {
-    "type": "json",
-    "path": "output.json"
+  "sink": {
+    "type": "csv",
+    "params": {
+      "path": "output.csv"
+    }
+  },
+  "generator": {
+    "rps": 1000,
+    "num_records": 5000
   }
 }
 ```
 
-3. Run GlassGen:
+3. Run GlassGen using either the CLI or Python SDK:
+
+### Using CLI
 ```bash
 glassgen generate --config config.json
+```
+
+### Using Python SDK
+```python
+import glassgen
+import json
+
+# Load configuration from file
+with open("config.json") as f:
+    config = json.load(f)
+
+# Start the generator
+glassgen.generate(config=config)
+```
+
+Or directly in your code:
+```python
+import glassgen
+
+config = {
+    "schema": {
+        "id": "$uuid",
+        "name": "$name",
+        "email": "$email",
+        "age": "$intrange(18,65)"
+    },
+    "sink": {
+        "type": "csv",
+        "params": {
+            "path": "output.csv"
+        }
+    },
+    "generator": {
+        "rps": 1000,
+        "num_records": 5000
+    }
+}
+
+glassgen.generate(config=config)
 ```
 
 ## Documentation

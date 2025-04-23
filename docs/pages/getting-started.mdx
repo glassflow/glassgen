@@ -46,6 +46,48 @@ pytest
 
 ### Python SDK
 
+Here's a simple example of using GlassGen to generate user data and save it to a CSV file:
+
+```python
+import glassgen
+
+# Define your configuration
+config = {
+    "schema": {
+        "name": "$name",        
+        "email": "$email",
+        "country": "$country",
+        "id": "$uuid",
+        "address": "$address",
+        "phone": "$phone_number",
+        "job": "$job",
+        "company": "$company"
+    },
+    "sink": {
+        "type": "csv",
+        "params": {
+            "path": "output.csv"
+        }
+    },
+    "generator": {
+        "rps": 1500,  # records per second
+        "num_records": 5000  # total number of records to generate
+    }
+}
+
+# Start the generator
+glassgen.generate(config=config)
+```
+
+This will:
+1. Generate 5000 records of user data
+2. Create records at a rate of 1500 records per second
+3. Save the data to a file named `output.csv`
+
+### Configuration File
+
+You can also load the configuration from a JSON file:
+
 ```python
 import glassgen
 import json
@@ -58,9 +100,7 @@ with open("config.json") as f:
 glassgen.generate(config=config)
 ```
 
-### Configuration File
-
-Create a `config.json` file with the following structure:
+The configuration file (`config.json`) should follow this structure:
 
 ```json
 {

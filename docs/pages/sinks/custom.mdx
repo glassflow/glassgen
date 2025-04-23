@@ -1,0 +1,74 @@
+# Custom Sink
+
+GlassGen allows you to create your own custom sinks by extending the `BaseSink` class. This is useful when you need to:
+- Send data to a custom destination
+- Process data in a specific way
+- Integrate with systems not supported by built-in sinks
+
+## Creating a Custom Sink
+
+To create a custom sink, you need to extend the `BaseSink` class and implement three methods:
+
+1. `publish(self, data)`: Handle a single record
+2. `publish_bulk(self, data)`: Handle multiple records
+3. `close(self)`: Clean up resources when done
+
+Here's a basic example of a custom sink that prints data to the console:
+
+```python
+from glassgen.sinks import BaseSink
+
+class PrintSink(BaseSink):
+    def __init__(self, config=None):
+        self.config = config
+    
+    def publish(self, data):
+        print(data)
+    
+    def publish_bulk(self, data):
+        for item in data:
+            print(item)
+    
+    def close(self):
+        pass
+```
+
+## Using a Custom Sink
+
+You can use your custom sink by passing it directly to the `generate` function:
+
+```python
+import glassgen
+from glassgen.sinks import BaseSink
+
+class PrintSink(BaseSink):
+    def publish(self, data):
+        print(data)
+    
+    def publish_bulk(self, data):
+        for item in data:
+            print(item)
+    
+    def close(self):
+        pass
+
+config = {
+    "schema": {
+        "name": "$name",        
+        "email": "$email",
+        "country": "$country",
+        "id": "$uuid",
+        "address": "$address",
+        "phone": "$phone_number",
+        "job": "$job",
+        "company": "$company"
+    },    
+    "generator": {
+        "rps": 10,
+        "num_records": 100
+    }
+}
+
+# Use the custom sink
+glassgen.generate(config=config, sink=PrintSink())
+```
