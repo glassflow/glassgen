@@ -11,7 +11,9 @@
     },
     "sink": {
         "type": "csv",
-        "path": "output.csv"
+        "params": {
+            "path": "output.csv"
+        }
     },
     "generator": {
         "rps": 1500,
