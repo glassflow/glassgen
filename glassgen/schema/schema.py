@@ -17,12 +17,12 @@ class ConfigSchema(BaseSchema, BaseModel):
     @classmethod
     def from_dict(cls, schema_dict: Dict[str, str]) -> "ConfigSchema":
         """Create a schema from a configuration dictionary"""
-        fields = cls._generate_schema_fields(schema_dict)
+        fields = cls._schema_dict_to_fields(schema_dict)
         return cls(fields=fields)
     
     @staticmethod
-    def _generate_schema_fields(schema_dict: Dict[str, str]) -> Dict[str, SchemaField]:
-        """Generate schema fields from a configuration dictionary"""
+    def _schema_dict_to_fields(schema_dict: Dict[str, str]) -> Dict[str, SchemaField]:
+        """Convert a schema dictionary to a dictionary of SchemaField objects"""
         fields = {}
         for name, generator_str in schema_dict.items():            
             match = re.match(r"\$(\w+)(?:\((.*)\))?", generator_str)
