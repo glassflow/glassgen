@@ -30,8 +30,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/glassflow/glassgen"
-Documentation = "https://glassflow.github.io/glassgen"
+Homepage = "https://glassgen.glassflow.dev/"
+Documentation = "https://glassgen.glassflow.dev/"
 Repository = "https://github.com/glassflow/glassgen.git"
 Issues = "https://github.com/glassflow/glassgen/issues"
 
