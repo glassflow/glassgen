@@ -9,10 +9,10 @@ class GeneratorType(str, Enum):
     """Supported generator types"""
     STRING = "string"
     INT = "int"
-    INTRANGE = "intrange"  # New generator type for integer range
-    CHOICE = "choice"  # New generator type for picking from a list
-    DATETIME = "datetime"  # New generator type for current datetime
-    TIMESTAMP = "timestamp"  # New generator type for Unix timestamp
+    INTRANGE = "intrange"  
+    CHOICE = "choice"  
+    DATETIME = "datetime" 
+    TIMESTAMP = "timestamp"
     EMAIL = "email"
     COUNTRY = "country"
     UUID = "uuid"
@@ -35,6 +35,8 @@ class GeneratorType(str, Enum):
     COLOR_NAME = "color_name"
     COMPANY_EMAIL = "company_email"
     GREETING = "greeting"
+    FLOAT = "float"
+    PRICE = "price"
 
 def choice_generator(choices: List[str]) -> str:
     """Generate a random choice from a list of strings"""
@@ -47,6 +49,17 @@ def intrange_generator(min_val: int, max_val: int) -> int:
 def greeting_generator() -> str:
     """Generate a random greeting from a list of strings"""
     return random.choice(["Hello", "Hi", "Hey", "Greetings", "Welcome"])
+
+def price_generator(min_price: float = 0.99, max_price: float = 9999.99) -> float:
+    """Generate a random price value with 2 decimal places"""
+    return round(random.uniform(min_price, max_price), 2)
+
+def datetime_generator(format_str: str = None) -> str:
+    """Generate current datetime with custom format"""
+    if format_str:
+        return datetime.now().strftime(format_str)
+    else:
+        return datetime.now().isoformat()
 
 class GeneratorRegistry:
     """Registry for data generators"""
@@ -62,7 +75,7 @@ class GeneratorRegistry:
             GeneratorType.INT: self._faker.random_int,
             GeneratorType.INTRANGE: intrange_generator,
             GeneratorType.CHOICE: choice_generator,
-            GeneratorType.DATETIME: lambda: datetime.now().isoformat(),
+            GeneratorType.DATETIME: datetime_generator,
             GeneratorType.TIMESTAMP: lambda: int(time.time()),
             GeneratorType.EMAIL: self._faker.email,
             GeneratorType.COUNTRY: self._faker.country,
@@ -86,6 +99,8 @@ class GeneratorRegistry:
             GeneratorType.COLOR_NAME: self._faker.color_name,
             GeneratorType.COMPANY_EMAIL: self._faker.company_email,
             GeneratorType.GREETING: greeting_generator,
+            GeneratorType.FLOAT: self._faker.pyfloat,
+            GeneratorType.PRICE: price_generator,
         }
 
     def register_generator(self, name: str, generator: Callable[..., Any]) -> None:
