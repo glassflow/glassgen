@@ -47,7 +47,12 @@ Randomly picks one value from the provided list.
     "field": "$datetime"
 }
 ```
-Generates current timestamp in ISO format (e.g., "2024-03-15T14:30:45.123456").
+Generates current timestamp in ISO format by default (e.g., "2024-03-15T14:30:45.123456"). You can specify a custom format:
+```json
+{
+    "field": "$datetime(\"%Y-%m-%d %H:%M:%S\")"
+}
+```
 
 ### Timestamp Generator
 ```json
@@ -64,6 +69,30 @@ Generates current Unix timestamp in seconds since epoch (e.g., 1710503445).
 }
 ```
 Generates a random boolean value.
+
+### Float Generator
+```json
+{
+    "field": "$float"
+}
+```
+Generates a random floating point number.
+
+### Price Generator
+```json
+{
+    "field": "$price"
+}
+```
+Generates a random price value with 2 decimal places (e.g., 99.99).
+
+### Greeting Generator
+```json
+{
+    "field": "$greeting"
+}
+```
+Generates a random greeting (e.g., "Hello", "Hi", "Hey", "Greetings", "Welcome").
 
 ### UUID Generators
 ```json

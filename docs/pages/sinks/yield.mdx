@@ -1,0 +1,52 @@
+# Yield Sink
+
+The Yield sink is unique among GlassGen sinks as it doesn't send data to an external destination. Instead, it returns an iterator that you can use to process the generated data directly in your Python code.
+
+## Key Features
+
+- Returns an iterator for direct data processing
+- No external dependencies or configuration needed
+- Perfect for in-memory data processing
+- Useful for testing and development
+- Enables custom data processing pipelines
+
+## Configuration
+
+The yield sink has the simplest configuration of all sinks:
+
+```json
+{
+    "sink": {
+        "type": "yield"
+    }
+}
+```
+
+## Usage Examples
+
+### Basic Usage
+```python
+import glassgen
+
+config = {
+    "schema": {
+        "name": "$name",        
+        "email": "$email",
+        "age": "$intrange(18,65)"
+    },
+    "sink": {
+        "type": "yield"
+    },
+    "generator": {
+        "rps": 100,
+        "num_records": 1000
+    }
+}
+
+# Get the iterator
+gen = glassgen.generate(config=config)
+
+# Process the data
+for item in gen:
+    print(item)
+```

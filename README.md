@@ -79,6 +79,14 @@ glassgen.generate(config=config)
 
 ## Supported Sinks
 
+GlassGen supports multiple sink types for different output destinations:
+
+- [CSV Sink](#csv-sink) - Write data to CSV files
+- [Kafka Sink](#kafka-sink) - Send data to Kafka topics (supports both Confluent Cloud and Aiven)
+- [Webhook Sink](#webhook-sink) - Send data to HTTP endpoints
+- [Yield Sink](#yield-sink) - Get data as an iterator in Python
+- [Custom Sink](#custom-sink) - Create your own sink implementation
+
 ### CSV Sink
 ```json
 {
