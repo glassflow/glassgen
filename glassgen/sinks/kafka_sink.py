@@ -1,89 +1,44 @@
-from typing import Any, Dict, List
+from confluent_kafka import Producer
+import json
+from typing import Dict, List, Any
+from .base import BaseSink
 from pydantic import BaseModel, Field
-from glassgen.sinks.base import BaseSink
-from glassgen.sinks.kafka import BaseKafkaClient
-import socket
 
+class KafkaSinkParams(BaseModel):
+    bootstrap_servers: str = Field(..., description="Kafka bootstrap servers", alias="bootstrap.servers")
+    topic: str = Field(..., description="Kafka topic to publish to", exclude=True)
+    model_config = {
+        "populate_by_name": True,
+        "extra": "allow"
+    }
 
-class ConfluentKafkaSinkParams(BaseModel):
-    bootstrap_servers: str = Field(..., description="Kafka bootstrap servers")
-    topic: str = Field(..., description="Kafka topic to publish to")
-    security_protocol: str = Field(default="SASL_SSL", description="Security protocol for Kafka connection")
-    sasl_mechanism: str = Field(default="PLAIN", description="SASL mechanism for authentication")
-    username: str = Field(..., description="SASL username for authentication")
-    password: str = Field(..., description="SASL password for authentication")
-    client_id: str = Field(default_factory=socket.gethostname, description="Client ID for Kafka connection")
-    
-    @property
-    def client_config(self) -> Dict[str, str]:
-        """Get Confluent client configuration"""
-        return {
-            "bootstrap.servers": self.bootstrap_servers,
-            "security.protocol": self.security_protocol,
-            "sasl.mechanisms": self.sasl_mechanism,
-            "sasl.username": self.username,
-            "sasl.password": self.password,
-            "client.id": self.client_id
-        }
-
-
-class ConfluentKafkaSink(BaseSink, BaseKafkaClient):
-    def __init__(self, sink_params: Dict[str, Any]):
-        self.params = ConfluentKafkaSinkParams.model_validate(sink_params)
+class KafkaSink(BaseSink):
+    def __init__(self, sink_params: Dict[str, Any]):                
+        self.params = KafkaSinkParams.model_validate(sink_params)
         self.topic = self.params.topic
-        super().__init__(self.params.bootstrap_servers)
+        config = self.params.model_dump(by_alias=True)
+        self.producer = Producer(config)
     
-    def get_client_config(self) -> Dict[str, str]:
-        return self.params.client_config
-    
-    def publish(self, data: Dict[str, Any]) -> None:
-        self.send_messages(self.topic, [data])
+    def delivery_report(self, err, msg):
+        """Reports message delivery status."""
+        if err:
+            print(f"❌ Message delivery failed: {err}")
+        else:
+            pass            
 
-    def publish_bulk(self, data: List[Dict[str, Any]]) -> None:
-        self.send_messages(self.topic, data)
-
+    def publish(self, record: Dict[str, Any]) -> None:
+        self.publish_bulk([record])
+        
+    def publish_bulk(self, records: List[Dict[str, Any]]) -> None:
+        for msg in records:
+            message_value = json.dumps(msg) if isinstance(msg, dict) else msg
+            self.producer.produce(
+                self.topic,
+                value=message_value.encode('utf-8'),
+                callback=self.delivery_report
+            )
+            self.producer.poll(0)  # Trigger message delivery            
+        self.producer.flush()  # Ensure all messages are sent        
+        
     def close(self) -> None:
-        pass
-
-
-class AivenKafkaSinkParams(BaseModel):
-    bootstrap_servers: str = Field(..., description="Kafka bootstrap servers")
-    topic: str = Field(..., description="Kafka topic to publish to")
-    security_protocol: str = Field(default="SASL_SSL", description="Security protocol for Kafka connection")
-    sasl_mechanism: str = Field(default="PLAIN", description="SASL mechanism for authentication")
-    username: str = Field(..., description="SASL username for authentication")
-    password: str = Field(..., description="SASL password for authentication")
-    ssl_cafile: str = Field(..., description="Path to SSL CA certificate file")
-    client_id: str = Field(default_factory=socket.gethostname, description="Client ID for Kafka connection")
-    
-    @property
-    def client_config(self) -> Dict[str, str]:
-        """Get Aiven client configuration"""
-        return {
-            "bootstrap.servers": self.bootstrap_servers,
-            "security.protocol": self.security_protocol,
-            "sasl.mechanisms": self.sasl_mechanism,
-            "sasl.username": self.username,
-            "sasl.password": self.password,
-            "client.id": self.client_id,
-            "ssl.ca.location": self.ssl_cafile
-        }
-
-
-class AivenKafkaSink(BaseSink, BaseKafkaClient):
-    def __init__(self, sink_params: Dict[str, Any]):
-        self.params = AivenKafkaSinkParams.model_validate(sink_params)
-        self.topic = self.params.topic
-        super().__init__(self.params.bootstrap_servers)
-    
-    def get_client_config(self) -> Dict[str, str]:
-        return self.params.client_config
-    
-    def publish(self, data: Dict[str, Any]) -> None:
-        self.send_messages(self.topic, [data])
-
-    def publish_bulk(self, data: List[Dict[str, Any]]) -> None:
-        self.send_messages(self.topic, data)
-
-    def close(self) -> None:
-        pass
+        self.producer.flush()

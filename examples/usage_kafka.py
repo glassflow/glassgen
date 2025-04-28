@@ -12,14 +12,16 @@ config = {
         "company": "$company"
     },
     "sink": {
-        "type": "kafka.aiven",
-        "bootstrap_servers": "broker.h.aivencloud.com:12766",
-        "username": "default",
-        "password": "******",
-        "ssl_cafile": "ca.pem",
-        "topic": "example",
-        "security_protocol": "SASL_SSL",
-        "sasl_mechanism": "SCRAM-SHA-256"                
+        "type": "kafka",
+        "params": {
+            "bootstrap.servers": "broker.h.aivencloud.com:12766",
+            "topic": "example",
+            "sasl.username": "default",
+            "sasl.password": "******",
+            "ssl.ca.location": "ca.pem",            
+            "security.protocol": "SASL_SSL",
+            "sasl.mechanisms": "SCRAM-SHA-256"
+        }
     },
     "generator": {
         "rps": 1500,
