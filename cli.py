@@ -28,7 +28,7 @@ def generate_data(config: str):
         raise click.Abort()
 
 @cli.command()
-@click.option('--type', '-t', type=click.Choice(['csv', 'kafka.aiven', 'kafka.confluent']), default='csv', help='Configuration type')
+@click.option('--type', '-t', type=click.Choice(['csv', 'kafka']), default='csv', help='Configuration type')
 @click.option('--output', '-o', type=click.Path(), help='Output file path')
 def init_config(type: str, output: Optional[str]):
     """Initialize a new configuration file"""
@@ -55,7 +55,7 @@ def init_config(type: str, output: Optional[str]):
                 "num_records": 1000
             }
         },
-        'kafka.aiven': {
+        'kafka': {
             "schema": {
                 "name": "$name",
                 "email": "$email",
@@ -67,41 +67,14 @@ def init_config(type: str, output: Optional[str]):
                 "company": "$company"
             },
             "sink": {
-                "type": "kafka.aiven",
+                "type": "kafka",
                 "params": {
-                    "bootstrap_servers": "your-aiven-kafka-host:9092",
+                    "bootstrap.servers": "your-kafka-host:9092",
                     "topic": "glassgen-data",
-                    "security_protocol": "SSL",
-                    "ssl_cafile": "path/to/ca.pem",
-                    "ssl_certfile": "path/to/service.cert",
-                    "ssl_keyfile": "path/to/service.key"
-                }
-            },
-            "generator": {
-                "rps": 500,
-                "num_records": 1000
-            }
-        },
-        'kafka.confluent': {
-            "schema": {
-                "name": "$name",
-                "email": "$email",
-                "country": "$country",
-                "id": "$uuid",
-                "address": "$address",
-                "phone": "$phone_number",
-                "job": "$job",
-                "company": "$company"
-            },
-            "sink": {
-                "type": "kafka.confluent",
-                "params": {
-                    "bootstrap_servers": "your-confluent-kafka-host:9092",
-                    "topic": "glassgen-data",
-                    "security_protocol": "SASL_SSL",
-                    "sasl_mechanism": "PLAIN",
-                    "sasl_username": "your-api-key",
-                    "sasl_password": "your-api-secret"
+                    "security.protocol": "SASL_SSL",
+                    "sasl.mechanism": "PLAIN",
+                    "sasl.username": "your-api-key",
+                    "sasl.password": "your-api-secret"
                 }
             },
             "generator": {

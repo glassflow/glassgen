@@ -1,50 +1,51 @@
 # Kafka Sink
 
-The Kafka sink sends generated data to Kafka topics. It's useful for:
+The Kafka sink sends generated data to Kafka topics using the `confluent_kafka` Python package. It's useful for:
 - Real-time data streaming
 - Event-driven architectures
 - Integration with Kafka-based data pipelines
 
 ## Configuration
 
-GlassGen supports multiple Kafka sink types:
+The Kafka sink accepts any configuration parameters that are valid for the `confluent_kafka` Python package. The minimum required parameters are:
 
-### Confluent Cloud
 ```json
 {
   "sink": {
-    "type": "kafka.confluent",
+    "type": "kafka",
     "params": {
-      "bootstrap_servers": "your-confluent-bootstrap-server",
-      "topic": "topic_name",
-      "security_protocol": "SASL_SSL",
-      "sasl_mechanism": "PLAIN",
-      "sasl_plain_username": "your-api-key",
-      "sasl_plain_password": "your-api-secret"
+      "bootstrap.servers": "your-kafka-bootstrap-server",
+      "topic": "topic_name"
     }
   }
 }
 ```
 
-### Aiven Kafka
+### Additional Configuration
+
+You can add any additional configuration parameters supported by the `confluent_kafka` package. Here are some common examples:
+
+#### Secured Kafka Connection
 ```json
 {
   "sink": {
-    "type": "kafka.aiven",
+    "type": "kafka",
     "params": {
-      "bootstrap_servers": "your-aiven-bootstrap-server",
+      "bootstrap.servers": "your-kafka-bootstrap-server",
       "topic": "topic_name",
-      "security_protocol": "SASL_SSL",
-      "sasl.mechanisms": "SCRAM-SHA-256",
-      "ssl_cafile": "path/to/ca.pem"
+      "security.protocol": "SASL_SSL",
+      "sasl.mechanism": "PLAIN",
+      "sasl.username": "your-api-key",
+      "sasl.password": "your-api-secret"
     }
   }
 }
 ```
 
-## Examples
+## Example Usage
 
-### Confluent Cloud Usage
+Here's a complete example that generates user events and sends them to a Kafka topic:
+
 ```json
 {
   "schema": {
@@ -54,36 +55,14 @@ GlassGen supports multiple Kafka sink types:
     "timestamp": "$timestamp"
   },
   "sink": {
-    "type": "kafka.confluent",
+    "type": "kafka",
     "params": {
-      "bootstrap_servers": "kafka1:9092,kafka2:9092",
+      "bootstrap.servers": "kafka1:9092,kafka2:9092",
       "topic": "user_events",
-      "security_protocol": "SASL_SSL",
-      "sasl_mechanism": "PLAIN",
-      "sasl_plain_username": "your-api-key",
-      "sasl_plain_password": "your-api-secret"
-    }
-  }
-}
-```
-
-### Aiven Kafka Usage
-```json
-{
-  "schema": {
-    "id": "$uuid",
-    "name": "$name",
-    "email": "$email",
-    "timestamp": "$timestamp"
-  },
-  "sink": {
-    "type": "kafka.aiven",
-    "params": {
-      "bootstrap_servers": "kafka1:9092,kafka2:9092",
-      "topic": "user_events",
-      "security_protocol": "SASL_SSL",
-      "sasl.mechanisms": "SCRAM-SHA-256",
-      "ssl_cafile": "path/to/ca.pem"
+      "security.protocol": "SASL_SSL",
+      "sasl.mechanism": "PLAIN",
+      "sasl.username": "your-api-key",
+      "sasl.password": "your-api-secret"
     }
   }
 }
@@ -101,3 +80,10 @@ Messages are sent as JSON strings with the following structure:
   "timestamp": 1710503445
 }
 ```
+
+## Notes
+
+- The sink uses the `confluent_kafka` Python package internally to connect to Kafka
+- All configuration parameters are passed directly to the `confluent_kafka.Producer`
+- The `topic` parameter is required but handled separately from the producer configuration
+- For a complete list of supported configuration parameters, refer to the [confluent_kafka documentation](https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#producer)

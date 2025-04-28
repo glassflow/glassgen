@@ -65,7 +65,7 @@ glassgen.generate(config=config)
         "field2": "$generator_type(param1, param2)"
     },
     "sink": {
-        "type": "csv|kafka.aiven|kafka.confluent|webhook|yield",
+        "type": "csv|kafka|webhook|yield",
         "params": {
             // sink-specific parameters
         }
@@ -117,42 +117,26 @@ GlassGen supports multiple sink types for different output destinations:
 ```
 
 ### Kafka Sink
-GlassGen supports multiple Kafka sink types:
+The Kafka sink uses the `confluent_kafka` Python package to connect to any Kafka cluster. It accepts all configuration parameters supported by the package:
 
-1. **Confluent Cloud**
 ```json
 {
     "sink": {
-        "type": "kafka.confluent",
+        "type": "kafka",
         "params": {
-            "bootstrap_servers": "your-confluent-bootstrap-server",
+            "bootstrap.servers": "your-kafka-bootstrap-server",
             "topic": "topic_name",
-            "security_protocol": "SASL_SSL",
-            "sasl_mechanism": "PLAIN",
-            "username": "your-api-key",
-            "password": "your-api-secret"
+            "security.protocol": "SASL_SSL",  // optional
+            "sasl.mechanism": "PLAIN",        // optional
+            "sasl.username": "your-api-key",  // optional
+            "sasl.password": "your-api-secret" // optional
         }
     }
 }
 ```
 
-2. **Aiven Kafka**
-```json
-{
-    "sink": {
-        "type": "kafka.aiven",
-        "params": {
-            "bootstrap_servers": "your-aiven-bootstrap-server",
-            "topic": "topic_name",
-            "security_protocol": "SASL_SSL",
-            "sasl.mechanisms": "SCRAM-SHA-256",
-            "username": "username",
-            "password": "password",
-            "ssl_cafile": "path/to/ca.pem"
-        }
-    }
-}
-```
+The minimum required parameters are `bootstrap.servers` and `topic`. Any additional configuration parameters supported by the `confluent_kafka` package can be added to the params object.
+
 ### Yield Sink
 Yield sink returns an iterator for the generated events
 ```json
