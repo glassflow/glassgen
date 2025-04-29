@@ -1,12 +1,14 @@
 # a user schema that generates a simulated user profile
 import random
-from typing import Dict, Any
+from typing import Any, Dict
+
+from glassgen.generator.generators import GeneratorType, registry
 from glassgen.schema.base import BaseSchema
-from glassgen.generator.generators import registry, GeneratorType
 
 
 class UserSchema(BaseSchema):
     """A schema for generating user profile data"""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.validate()
@@ -18,12 +20,12 @@ class UserSchema(BaseSchema):
             GeneratorType.NAME,
             GeneratorType.EMAIL,
             GeneratorType.PHONE_NUMBER,
-            GeneratorType.ADDRESS
+            GeneratorType.ADDRESS,
         }
-        
+
         available_generators = set(registry.get_supported_generators().keys())
         missing_generators = required_generators - available_generators
-        
+
         if missing_generators:
             raise ValueError(
                 f"Missing required generators: {', '.join(missing_generators)}"
@@ -37,5 +39,5 @@ class UserSchema(BaseSchema):
             "age": random.randint(18, 65),
             "email": registry.get_generator(GeneratorType.EMAIL)(),
             "phone": registry.get_generator(GeneratorType.PHONE_NUMBER)(),
-            "address": registry.get_generator(GeneratorType.ADDRESS)()
+            "address": registry.get_generator(GeneratorType.ADDRESS)(),
         }

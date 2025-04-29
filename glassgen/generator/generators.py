@@ -1,17 +1,20 @@
+import random
+import time
+from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List
+
 from faker import Faker
-import random
-from datetime import datetime
-import time
+
 
 class GeneratorType(str, Enum):
     """Supported generator types"""
+
     STRING = "string"
     INT = "int"
-    INTRANGE = "intrange"  
-    CHOICE = "choice"  
-    DATETIME = "datetime" 
+    INTRANGE = "intrange"
+    CHOICE = "choice"
+    DATETIME = "datetime"
     TIMESTAMP = "timestamp"
     EMAIL = "email"
     COUNTRY = "country"
@@ -38,21 +41,26 @@ class GeneratorType(str, Enum):
     FLOAT = "float"
     PRICE = "price"
 
+
 def choice_generator(choices: List[str]) -> str:
     """Generate a random choice from a list of strings"""
     return random.choice(choices)
+
 
 def intrange_generator(min_val: int, max_val: int) -> int:
     """Generate a random integer between min_val and max_val"""
     return random.randint(min_val, max_val)
 
+
 def greeting_generator() -> str:
     """Generate a random greeting from a list of strings"""
     return random.choice(["Hello", "Hi", "Hey", "Greetings", "Welcome"])
 
+
 def price_generator(min_price: float = 0.99, max_price: float = 9999.99) -> float:
     """Generate a random price value with 2 decimal places"""
     return round(random.uniform(min_price, max_price), 2)
+
 
 def datetime_generator(format_str: str = None) -> str:
     """Generate current datetime with custom format"""
@@ -61,8 +69,10 @@ def datetime_generator(format_str: str = None) -> str:
     else:
         return datetime.now().isoformat()
 
+
 class GeneratorRegistry:
     """Registry for data generators"""
+
     def __init__(self):
         self._faker = Faker()
         self._generators: Dict[str, Callable[..., Any]] = {}
@@ -82,7 +92,9 @@ class GeneratorRegistry:
             GeneratorType.UUID: lambda: str(self._faker.uuid4()),
             GeneratorType.NAME: self._faker.name,
             GeneratorType.TEXT: self._faker.text,
-            GeneratorType.ADDRESS: lambda: self._faker.address().replace('\n', ' ').strip(),
+            GeneratorType.ADDRESS: lambda: self._faker.address()
+            .replace("\n", " ")
+            .strip(),
             GeneratorType.PHONE_NUMBER: self._faker.phone_number,
             GeneratorType.JOB: self._faker.job,
             GeneratorType.COMPANY: self._faker.company,
@@ -117,5 +129,6 @@ class GeneratorRegistry:
         """Get all supported generators"""
         return self._generators.copy()
 
+
 # Create a global registry instance
-registry = GeneratorRegistry() 
+registry = GeneratorRegistry()

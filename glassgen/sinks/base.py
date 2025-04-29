@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
+
 class BaseSink(ABC):
     @abstractmethod
     def publish(self, data: Dict[str, Any]) -> None:

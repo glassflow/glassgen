@@ -1,5 +1,13 @@
 # GlassGen
 
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![image](https://img.shields.io/pypi/v/glassgen.svg)](https://pypi.python.org/pypi/glassgen)
+[![image](https://img.shields.io/pypi/l/glassgen.svg)](https://github.com/astral-sh/glassgen/blob/main/LICENSE)
+[![image](https://img.shields.io/pypi/pyversions/glassgen.svg)](https://pypi.python.org/pypi/glassgen)
+[![Actions status](https://github.com/glassflow/glassgen/workflows/Test/badge.svg)](https://github.com/glassflow/glassgen/actions)
+<!-- Pytest Coverage Comment:Begin -->
+<!-- Pytest Coverage Comment:End -->
+
 GlassGen is a flexible synthetic data generation service that can generate data based on user-defined schemas and send it to various destinations.
 
 ## Features

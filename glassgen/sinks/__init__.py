@@ -1,15 +1,22 @@
 from glassgen.sinks.base import BaseSink
 from glassgen.sinks.csv_sink import CSVSink
+from glassgen.sinks.kafka_sink import KafkaSink
 from glassgen.sinks.webhook_sink import WebHookSink
 from glassgen.sinks.yield_sink import YieldSink
-from glassgen.sinks.kafka_sink import KafkaSink
 
-__all__ = ["BaseSink", "CSVSink", "SinkFactory", "KafkaSink", "WebHookSink", "YieldSink"]
+__all__ = [
+    "BaseSink",
+    "CSVSink",
+    "SinkFactory",
+    "KafkaSink",
+    "WebHookSink",
+    "YieldSink",
+]
 
 
 class SinkFactory:
     _sinks = {
-        "csv": CSVSink,        
+        "csv": CSVSink,
         "webhook": WebHookSink,
         "yield": YieldSink,
         "kafka": KafkaSink,

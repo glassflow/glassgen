@@ -2,14 +2,14 @@ import glassgen
 
 config = {
     "schema": {
-        "name": "$name",        
+        "name": "$name",
         "email": "$email",
         "country": "$country",
         "id": "$uuid",
         "address": "$address",
         "phone": "$phone_number",
         "job": "$job",
-        "company": "$company"
+        "company": "$company",
     },
     "sink": {
         "type": "kafka",
@@ -18,15 +18,12 @@ config = {
             "topic": "example",
             "sasl.username": "default",
             "sasl.password": "******",
-            "ssl.ca.location": "ca.pem",            
+            "ssl.ca.location": "ca.pem",
             "security.protocol": "SASL_SSL",
-            "sasl.mechanisms": "SCRAM-SHA-256"
-        }
+            "sasl.mechanisms": "SCRAM-SHA-256",
+        },
     },
-    "generator": {
-        "rps": 1500,
-        "num_records": 50
-    }
-} 
+    "generator": {"rps": 1500, "num_records": 50},
+}
 
 print(glassgen.generate(config=config))
