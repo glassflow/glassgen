@@ -26,7 +26,7 @@ class TestDynamicBatchController:
         controller.record_sent(10)
         assert controller.records_sent == 10
 
-    @patch('time.sleep')
+    @patch("time.sleep")
     def test_sleep_if_needed(self, mock_sleep):
         """Test sleep behavior when needed"""
         controller = DynamicBatchController(target_rps=100)
@@ -34,13 +34,14 @@ class TestDynamicBatchController:
         controller._sleep_if_needed()
         mock_sleep.assert_called_once()
 
-    @patch('time.sleep')
+    @patch("time.sleep")
     def test_sleep_until_next_window(self, mock_sleep):
         """Test sleep until next window behavior"""
         controller = DynamicBatchController(target_rps=100)
         controller._sleep_until_next_window()
         mock_sleep.assert_called_once()
         assert controller.records_sent == 0  # Should reset count
+
 
 class TestDuplicateController:
     def test_time_window_parsing(self, generator_config):

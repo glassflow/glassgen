@@ -114,10 +114,7 @@ def generator_config():
         num_records=1000,
         event_options=EventOptions(
             duplication=DuplicationConfig(
-                enabled=True,
-                ratio=0.2,
-                key_field="id",
-                time_window="1h"
+                enabled=True, ratio=0.2, key_field="id", time_window="1h"
             )
-        )
+        ),
     )
