@@ -1,0 +1,108 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        id: setup-python
+        with:
+          python-version-file: "pyproject.toml"
+      
+      - name: Install dependencies
+        run: |
+          pip install -e .[dev]
+    
+      - name: Run Ruff checks
+        run: |
+          ruff check .
+          ruff format --check .
+
+  test:
+    needs: lint
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      checks: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        id: setup-python
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install -e .[dev]
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=glassgen --cov-report=term-missing
+
+      - name: Generate coverage report
+        if: matrix.python-version == '3.8'
+        run: |
+          pytest --cov=glassgen --cov-report=xml:coverage.xml
+
+      - name: Pytest coverage comment
+        if: matrix.python-version == '3.8'
+        id: coverageComment
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+          pytest-xml-coverage-path: ./coverage.xml
+          title: "Test Coverage Report"
+          badge-title: "Coverage"
+          hide-badge: false
+          hide-report: false
+          create-new-comment: true
+          hide-comment: false
+          report-only-changed-files: false
+          remove-link-from-badge: false
+          unique-id-for-comment: "python-coverage"
+
+      - name: Update README with coverage badge
+        if: matrix.python-version == '3.8'
+        run: |
+          # Extract coverage percentage and color from the coverageComment step
+          COVERAGE_PERCENTAGE=$(echo "${{ steps.coverageComment.outputs.coverage }}" | grep -o '[0-9]*%' | tr -d '%')
+          BADGE_COLOR=$(echo "${{ steps.coverageComment.outputs.color }}" | tr -d '#')
+          
+          # Create the badge URL
+          BADGE_URL="https://img.shields.io/badge/coverage-${COVERAGE_PERCENTAGE}%25-${BADGE_COLOR}"
+          
+          # Update README with the badge
+          sed -i "/<!-- Pytest Coverage Comment:Begin -->/,/<!-- Pytest Coverage Comment:End -->/c\\
+          <!-- Pytest Coverage Comment:Begin -->\\
+          ![Coverage](${BADGE_URL})\\
+          <!-- Pytest Coverage Comment:End -->" README.md
+
+      - name: Clean up coverage file
+        if: matrix.python-version == '3.8'
+        run: |
+          rm -f coverage.xml
+
+      - name: Commit and push README changes
+        if: matrix.python-version == '3.8'
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+          message: "docs: update coverage badge"

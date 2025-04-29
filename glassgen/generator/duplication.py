@@ -6,7 +6,7 @@ from typing import Any, Dict, Tuple
 
 class DuplicateController:
     def __init__(self, generator_config):
-        self.generator_config = generator_config    
+        self.generator_config = generator_config
         self.duplicates: deque[Tuple[datetime, Dict[str, Any]]] = deque()
         self.total_generated = 0
         self.total_duplicates = 0
@@ -20,13 +20,13 @@ class DuplicateController:
         """Convert time_window string to timedelta"""
         value = int(time_window[:-1])
         unit = time_window[-1]
-        if unit == 's':
+        if unit == "s":
             return timedelta(seconds=value)
-        elif unit == 'm':
+        elif unit == "m":
             return timedelta(minutes=value)
-        elif unit == 'h':
+        elif unit == "h":
             return timedelta(hours=value)
-        elif unit == 'd':
+        elif unit == "d":
             return timedelta(days=value)
         else:
             raise ValueError(f"Invalid time window unit: {unit}")
@@ -37,8 +37,8 @@ class DuplicateController:
         while self.duplicates and self.duplicates[0][0] < cutoff_time:
             self.duplicates.popleft()
 
-    def _get_if_duplication(self):         
-        current_ratio = self.total_duplicates / max(1, self.total_generated)        
+    def _get_if_duplication(self):
+        current_ratio = self.total_duplicates / max(1, self.total_generated)
         if current_ratio >= self.target_ratio:
             return None
         else:
@@ -48,7 +48,7 @@ class DuplicateController:
                 return duplicate
 
     def _get_duplicate(self):
-        """Get a random duplicate from the stored records"""        
+        """Get a random duplicate from the stored records"""
         self._cleanup_old_duplicates()
         if not self.duplicates:
             return None
@@ -68,5 +68,7 @@ class DuplicateController:
         return {
             "total_generated": self.total_generated,
             "total_duplicates": self.total_duplicates,
-            "duplication_ratio": round(self.total_duplicates / max(1, self.total_generated), 2)
+            "duplication_ratio": round(
+                self.total_duplicates / max(1, self.total_generated), 2
+            ),
         }
