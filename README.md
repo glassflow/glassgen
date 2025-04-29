@@ -6,6 +6,7 @@
 [![image](https://img.shields.io/pypi/pyversions/glassgen.svg)](https://pypi.python.org/pypi/glassgen)
 [![Actions status](https://github.com/glassflow/glassgen/workflows/Test/badge.svg)](https://github.com/glassflow/glassgen/actions)
 <!-- Pytest Coverage Comment:Begin -->
+![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
 <!-- Pytest Coverage Comment:End -->
 
 GlassGen is a flexible synthetic data generation service that can generate data based on user-defined schemas and send it to various destinations.
