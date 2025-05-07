@@ -118,3 +118,23 @@ def generator_config():
             )
         ),
     )
+
+
+@pytest.fixture
+def predefined_schema_dedup_config():
+    """Fixture for predefined schema with deduplication configuration"""
+    return {
+        "sink": {"type": "yield"},
+        "generator": {
+            "rps": 100,
+            "num_records": 20,
+            "event_options": {
+                "duplication": {
+                    "enabled": True,
+                    "ratio": 0.3,  # 30% duplication
+                    "key_field": "email",  # Deduplicate based on email
+                    "time_window": "30m"
+                }
+            }
+        }
+    }
