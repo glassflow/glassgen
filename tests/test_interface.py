@@ -48,3 +48,20 @@ def test_duplication_feature(duplication_config):
     # Verify that the duplication ratio is approximately correct
     expected_duplicates = int(10 * 0.2)  # 20% of 10 records
     assert len(events) - len(unique_emails) >= expected_duplicates
+
+
+def test_predefined_schema_with_deduplication(predefined_schema_dedup_config):
+    """Test generating data with pre-defined UserSchema and deduplication"""
+    from glassgen.schema.user_schema import UserSchema
+
+    gen = generate(predefined_schema_dedup_config, schema=UserSchema())
+    events = list(gen)
+
+    # Check total number of events
+    assert len(events) == predefined_schema_dedup_config["generator"]["num_records"]
+
+    # Count unique emails
+    unique_emails = set(event["email"] for event in events)
+
+    # Verify we have duplicates
+    assert len(unique_emails) < len(events)
