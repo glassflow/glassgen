@@ -66,6 +66,7 @@ class GlassGenConfig(BaseModel):
             self.generator.event_options.duplication
             and self.generator.event_options.duplication.enabled
             and self.generator.event_options.duplication.key_field
+            and self.schema_config
         ):
             key_field = self.generator.event_options.duplication.key_field
             if key_field not in self.schema_config:
