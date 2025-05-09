@@ -133,8 +133,8 @@ def predefined_schema_dedup_config():
                     "enabled": True,
                     "ratio": 0.3,  # 30% duplication
                     "key_field": "email",  # Deduplicate based on email
-                    "time_window": "30m"
+                    "time_window": "30m",
                 }
-            }
-        }
+            },
+        },
     }
