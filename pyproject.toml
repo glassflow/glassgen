@@ -102,7 +102,7 @@ directory = "coverage_html_report"
 
 [tool.ruff]
 line-length = 88
-target-version = "0.1.15"
+target-version = "py38"
 
 [tool.ruff.lint]
 select = [
