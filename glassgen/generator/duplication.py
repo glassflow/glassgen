@@ -1,3 +1,4 @@
+import copy
 import random
 from collections import deque
 from datetime import datetime, timedelta
@@ -57,7 +58,7 @@ class DuplicateController:
     def add_record(self, record: Dict[str, Any]):
         """Add a record to the deque with timestamp, enforce max size"""
         now = datetime.now()
-        self.duplicates.append((now, record))
+        self.duplicates.append((now, copy.deepcopy(record)))
         self.total_generated += 1
 
         # Trim to max size
