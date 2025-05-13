@@ -231,7 +231,7 @@ generate(config, sink=PrintSink())
 - `$int`: Random integer
 - `$intrange(min,max)`: Random integer within specified range (e.g., `$intrange(1,100)` for numbers between 1 and 100)
 - `$choice(value1,value2,...)`: Randomly picks one value from the provided list (e.g., `$choice(red,blue,green)` or `$choice(1,2,3,4,5)`)
-- `$datetime(format)`: Current timestamp in specified format (e.g., `$datetime("%Y-%m-%d %H:%M:%S")`). Default format is ISO format (e.g., "2024-03-15T14:30:45.123456")
+- `$datetime(format)`: Current timestamp in specified format (e.g., `$datetime(%Y-%m-%d %H:%M:%S)`). Default format is ISO format (e.g., "2024-03-15T14:30:45.123456")
 - `$timestamp`: Current Unix timestamp in seconds since epoch (e.g., 1710503445)
 - `$boolean`: Random boolean value
 - `$uuid`: Random UUID

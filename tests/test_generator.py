@@ -134,3 +134,29 @@ class TestDuplicateController:
 
         # Should not return more duplicates once target ratio is reached
         assert controller._get_if_duplication() is None
+
+    def test_duplicated_event_immutability(self, generator_config):
+        """Test that duplicated events maintain their original state"""
+        controller = DuplicateController(generator_config)
+
+        # Create and add an original event
+        original_event = {
+            "id": "123",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "data": {"score": 100},
+        }
+        controller.add_record(original_event)
+
+        # Modify the original event
+        original_event["name"] = "Modified Name"
+        original_event["data"]["score"] = 200
+
+        # Get a duplicate of the event
+        duplicate = controller._get_duplicate()
+
+        # Verify the duplicate has the original values
+        assert duplicate["name"] == "John Doe"
+        assert duplicate["data"]["score"] == 100
+        assert duplicate["id"] == "123"
+        assert duplicate["email"] == "john@example.com"
