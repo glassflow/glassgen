@@ -144,7 +144,7 @@ class TestDuplicateController:
             "id": "123",
             "name": "John Doe",
             "email": "john@example.com",
-            "data": {"score": 100}
+            "data": {"score": 100},
         }
         controller.add_record(original_event)
 
