@@ -1,6 +1,6 @@
 [project]
 name = "glassgen"
-version = "0.1.15"
+version = "0.1.16"
 description = "A flexible synthetic data generation service"
 authors = [
     {name = "GlassFlow", email = "hello@glassflow.dev"},
@@ -102,7 +102,7 @@ directory = "coverage_html_report"
 
 [tool.ruff]
 line-length = 88
-target-version = "py38"
+target-version = "0.1.16"
 
 [tool.ruff.lint]
 select = [
