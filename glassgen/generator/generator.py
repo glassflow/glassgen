@@ -16,7 +16,7 @@ class Generator:
             if self.generator_config.rps > 0
             else None
         )
-        self.max_bulk_size = 5000
+        self.max_bulk_size = generator_config.bulk_size
         self.duplicate_controller = (
             DuplicateController(self.generator_config)
             if self.generator_config.event_options.duplication

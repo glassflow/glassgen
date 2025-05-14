@@ -49,7 +49,7 @@ class EventOptions(BaseModel):
 class GeneratorConfig(BaseModel):
     rps: int = Field(default=0, ge=0)
     num_records: int = Field(default=100, ge=-1)
-    bulk_size: int = Field(default=100, ge=0)
+    bulk_size: int = Field(default=5000, ge=0)
     event_options: EventOptions = Field(default=EventOptions())
     model_config = {"extra": "forbid"}
 
