@@ -8,7 +8,7 @@ class DynamicBatchController:
         self.records_sent = 0
         self.window = 1.0  # seconds
 
-    def get_batch_size(self, max_batch_size: int = 1000) -> int:
+    def get_batch_size(self, max_batch_size: int) -> int:
         now = time.time()
         elapsed = now - self.last_reset
 
@@ -17,12 +17,11 @@ class DynamicBatchController:
 
         remaining_time = self.window - elapsed
         remaining_records = max(self.target_rps - self.records_sent, 0)
-
         if remaining_time <= 0 or remaining_records <= 0:
             self._sleep_until_next_window()
             return self.get_batch_size(max_batch_size)
-
-        est_batch = int(remaining_records * 0.1)
+        # estimate the batch size based on the remaining records and the target RPS
+        est_batch = int(remaining_records)
         batch_size = min(est_batch or 1, remaining_records, max_batch_size)
         return max(1, batch_size)
 
