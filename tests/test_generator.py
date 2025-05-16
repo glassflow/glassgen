@@ -8,17 +8,19 @@ from glassgen.generator.duplication import DuplicateController
 class TestDynamicBatchController:
     def test_initial_batch_size(self):
         """Test initial batch size calculation"""
+        max_batch_size = 100
         controller = DynamicBatchController(target_rps=100)
-        batch_size = controller.get_batch_size()
-        assert 1 <= batch_size <= 100  # Should be between 1 and max_batch_size
+        batch_size = controller.get_batch_size(max_batch_size)
+        assert 1 <= batch_size <= max_batch_size
 
     def test_batch_size_with_remaining_records(self):
         """Test batch size calculation with remaining records"""
+        max_batch_size = 100
         controller = DynamicBatchController(target_rps=100)
         controller.records_sent = 50  # Half of target RPS used
-        batch_size = controller.get_batch_size()
+        batch_size = controller.get_batch_size(max_batch_size)
         assert batch_size > 0
-        assert batch_size <= 50  # Should not exceed remaining records
+        assert batch_size <= max_batch_size  # Should not exceed remaining records
 
     def test_record_sent_updates_count(self):
         """Test that record_sent updates the count correctly"""
