@@ -15,8 +15,9 @@ class SchemaField(BaseModel):
 
 class NestedSchemaField(BaseModel):
     """Represents a nested schema field that contains other fields"""
+
     name: str
-    fields: Dict[str, Union[SchemaField, 'NestedSchemaField']]
+    fields: Dict[str, Union[SchemaField, "NestedSchemaField"]]
 
 
 class ConfigSchema(BaseSchema, BaseModel):
@@ -35,7 +36,7 @@ class ConfigSchema(BaseSchema, BaseModel):
         schema_dict: Dict[str, Any],
     ) -> Dict[str, Union[SchemaField, NestedSchemaField]]:
         """Convert a schema dictionary to a dictionary of SchemaField or
-          NestedSchemaField objects"""
+        NestedSchemaField objects"""
         fields = {}
         for name, value in schema_dict.items():
             if isinstance(value, dict):
@@ -77,7 +78,7 @@ class ConfigSchema(BaseSchema, BaseModel):
         supported_generators = set(registry.get_supported_generators().keys())
 
         def validate_fields(
-            fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]]
+            fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]],
         ):
             for field in fields_dict.values():
                 if isinstance(field, SchemaField):
@@ -94,8 +95,9 @@ class ConfigSchema(BaseSchema, BaseModel):
 
     def _generate_record(self) -> Dict[str, Any]:
         """Generate a single record based on the schema"""
+
         def generate_nested_record(
-            fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]]
+            fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]],
         ) -> Dict[str, Any]:
             record = {}
             for field_name, field in fields_dict.items():

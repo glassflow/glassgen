@@ -20,7 +20,7 @@ class CSVSink(BaseSink):
         self.fieldnames = None
 
     def _flatten_dict(
-        self, data: Dict[str, Any], parent_key: str = '', sep: str = '_'
+        self, data: Dict[str, Any], parent_key: str = "", sep: str = "_"
     ) -> Dict[str, Any]:
         """
         Flatten a nested dictionary by concatenating keys with separator.
@@ -38,16 +38,12 @@ class CSVSink(BaseSink):
             new_key = f"{parent_key}{sep}{key}" if parent_key else key
             if isinstance(value, dict):
                 # Recursively flatten nested dictionaries
-                items.extend(
-                    self._flatten_dict(value, new_key, sep=sep).items()
-                )
+                items.extend(self._flatten_dict(value, new_key, sep=sep).items())
             else:
                 items.append((new_key, value))
         return dict(items)
 
-    def _get_flattened_fieldnames(
-        self, data: List[Dict[str, Any]]
-    ) -> List[str]:
+    def _get_flattened_fieldnames(self, data: List[Dict[str, Any]]) -> List[str]:
         """
         Get fieldnames from flattened data to ensure consistent column order.
 

@@ -111,7 +111,7 @@ def test_flat_schema():
         "choice": "$choice(apple,banana,cherry)",
         "weburl": "$url",
         "ts": "$datetime",
-        "tsunix": "$timestamp"
+        "tsunix": "$timestamp",
     }
 
     schema = ConfigSchema.from_dict(schema_dict)
@@ -147,11 +147,7 @@ def test_nested_schema():
         "email": "$email",
         "country": "$country",
         "id": "$uuid",
-        "location": {
-            "address": "$address",
-            "city": "$city",
-            "postal_code": "$zipcode"
-        },
+        "location": {"address": "$address", "city": "$city", "postal_code": "$zipcode"},
         "phone": "$phone_number",
         "job": "$job",
         "company": "$company",
@@ -159,7 +155,7 @@ def test_nested_schema():
         "choice": "$choice(apple,banana,cherry)",
         "weburl": "$url",
         "ts": "$datetime",
-        "tsunix": "$timestamp"
+        "tsunix": "$timestamp",
     }
 
     schema = ConfigSchema.from_dict(schema_dict)
@@ -199,23 +195,19 @@ def test_deeply_nested_schema():
     """Test deeply nested schemas work correctly"""
     schema_dict = {
         "user": {
-            "personal": {
-                "name": "$name",
-                "email": "$email",
-                "phone": "$phone_number"
-            },
+            "personal": {"name": "$name", "email": "$email", "phone": "$phone_number"},
             "address": {
                 "street": "$address",
                 "city": "$city",
                 "country": "$country",
-                "postal_code": "$zipcode"
-            }
+                "postal_code": "$zipcode",
+            },
         },
         "metadata": {
             "id": "$uuid",
             "created_at": "$datetime",
-            "tags": "$choice(tag1,tag2,tag3)"
-        }
+            "tags": "$choice(tag1,tag2,tag3)",
+        },
     }
 
     schema = ConfigSchema.from_dict(schema_dict)
@@ -253,15 +245,12 @@ def test_mixed_flat_and_nested_schema():
     schema_dict = {
         "name": "$name",
         "email": "$email",
-        "location": {
-            "address": "$address",
-            "city": "$city"
-        },
+        "location": {"address": "$address", "city": "$city"},
         "phone": "$phone_number",
         "preferences": {
             "theme": "$choice(dark,light)",
-            "notifications": "$choice(true,false)"
-        }
+            "notifications": "$choice(true,false)",
+        },
     }
 
     schema = ConfigSchema.from_dict(schema_dict)
@@ -292,7 +281,7 @@ def test_invalid_schema_value_type():
     """Test that invalid schema value types raise appropriate errors"""
     schema_dict = {
         "name": "$name",
-        "invalid_field": 123  # Invalid type - should be string or dict
+        "invalid_field": 123,  # Invalid type - should be string or dict
     }
 
     with pytest.raises(

@@ -64,7 +64,7 @@ def test_csv_sink_bulk_publish(temp_csv_file):
     with open(temp_csv_file, "r") as f:
         lines = f.readlines()
         assert len(lines) == 4  # Header + 3 data rows
-        header = lines[0].strip().split(',')
+        header = lines[0].strip().split(",")
         assert set(header) == {"name", "age"}  # Header fields, order-agnostic
 
     # Clean up
