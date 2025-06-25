@@ -31,8 +31,11 @@ class ConfigSchema(BaseSchema, BaseModel):
         return cls(fields=fields)
 
     @staticmethod
-    def _schema_dict_to_fields(schema_dict: Dict[str, Any]) -> Dict[str, Union[SchemaField, NestedSchemaField]]:
-        """Convert a schema dictionary to a dictionary of SchemaField or NestedSchemaField objects"""
+    def _schema_dict_to_fields(
+        schema_dict: Dict[str, Any],
+    ) -> Dict[str, Union[SchemaField, NestedSchemaField]]:
+        """Convert a schema dictionary to a dictionary of SchemaField or
+          NestedSchemaField objects"""
         fields = {}
         for name, value in schema_dict.items():
             if isinstance(value, dict):
@@ -64,20 +67,25 @@ class ConfigSchema(BaseSchema, BaseModel):
                     name=name, generator=generator_name, params=params
                 )
             else:
-                raise ValueError(f"Invalid schema value type for field '{name}': {type(value)}")
+                raise ValueError(
+                    f"Invalid schema value type for field '{name}': {type(value)}"
+                )
         return fields
 
     def validate(self) -> None:
         """Validate that all generators are supported"""
         supported_generators = set(registry.get_supported_generators().keys())
 
-        def validate_fields(fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]]):
+        def validate_fields(
+            fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]]
+        ):
             for field in fields_dict.values():
                 if isinstance(field, SchemaField):
                     if field.generator not in supported_generators:
                         raise ValueError(
                             f"Unsupported generator: {field.generator}. "
-                            f"Supported generators are: {', '.join(supported_generators)}"
+                            f"Supported generators are: "
+                            f"{', '.join(supported_generators)}"
                         )
                 elif isinstance(field, NestedSchemaField):
                     validate_fields(field.fields)
@@ -86,7 +94,9 @@ class ConfigSchema(BaseSchema, BaseModel):
 
     def _generate_record(self) -> Dict[str, Any]:
         """Generate a single record based on the schema"""
-        def generate_nested_record(fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]]) -> Dict[str, Any]:
+        def generate_nested_record(
+            fields_dict: Dict[str, Union[SchemaField, NestedSchemaField]]
+        ) -> Dict[str, Any]:
             record = {}
             for field_name, field in fields_dict.items():
                 if isinstance(field, SchemaField):

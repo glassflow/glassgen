@@ -113,12 +113,12 @@ def test_flat_schema():
         "ts": "$datetime",
         "tsunix": "$timestamp"
     }
-    
+
     schema = ConfigSchema.from_dict(schema_dict)
     schema.validate()
-    
+
     record = schema._generate_record()
-    
+
     # Check that all fields are present
     assert "name" in record
     assert "email" in record
@@ -132,10 +132,10 @@ def test_flat_schema():
     assert "weburl" in record
     assert "ts" in record
     assert "tsunix" in record
-    
+
     # Check that intrange is within the specified range
     assert 10 <= record["intrange"] <= 100
-    
+
     # Check that choice is one of the specified values
     assert record["choice"] in ["apple", "banana", "cherry"]
 
@@ -161,12 +161,12 @@ def test_nested_schema():
         "ts": "$datetime",
         "tsunix": "$timestamp"
     }
-    
+
     schema = ConfigSchema.from_dict(schema_dict)
     schema.validate()
-    
+
     record = schema._generate_record()
-    
+
     # Check that flat fields are present
     assert "name" in record
     assert "email" in record
@@ -180,17 +180,17 @@ def test_nested_schema():
     assert "weburl" in record
     assert "ts" in record
     assert "tsunix" in record
-    
+
     # Check that nested location field is present and has the expected structure
     assert "location" in record
     assert isinstance(record["location"], dict)
     assert "address" in record["location"]
     assert "city" in record["location"]
     assert "postal_code" in record["location"]
-    
+
     # Check that intrange is within the specified range
     assert 10 <= record["intrange"] <= 100
-    
+
     # Check that choice is one of the specified values
     assert record["choice"] in ["apple", "banana", "cherry"]
 
@@ -217,29 +217,29 @@ def test_deeply_nested_schema():
             "tags": "$choice(tag1,tag2,tag3)"
         }
     }
-    
+
     schema = ConfigSchema.from_dict(schema_dict)
     schema.validate()
-    
+
     record = schema._generate_record()
-    
+
     # Check nested structure
     assert "user" in record
     assert isinstance(record["user"], dict)
-    
+
     assert "personal" in record["user"]
     assert isinstance(record["user"]["personal"], dict)
     assert "name" in record["user"]["personal"]
     assert "email" in record["user"]["personal"]
     assert "phone" in record["user"]["personal"]
-    
+
     assert "address" in record["user"]
     assert isinstance(record["user"]["address"], dict)
     assert "street" in record["user"]["address"]
     assert "city" in record["user"]["address"]
     assert "country" in record["user"]["address"]
     assert "postal_code" in record["user"]["address"]
-    
+
     assert "metadata" in record
     assert isinstance(record["metadata"], dict)
     assert "id" in record["metadata"]
@@ -263,23 +263,23 @@ def test_mixed_flat_and_nested_schema():
             "notifications": "$choice(true,false)"
         }
     }
-    
+
     schema = ConfigSchema.from_dict(schema_dict)
     schema.validate()
-    
+
     record = schema._generate_record()
-    
+
     # Check flat fields
     assert "name" in record
     assert "email" in record
     assert "phone" in record
-    
+
     # Check nested fields
     assert "location" in record
     assert isinstance(record["location"], dict)
     assert "address" in record["location"]
     assert "city" in record["location"]
-    
+
     assert "preferences" in record
     assert isinstance(record["preferences"], dict)
     assert "theme" in record["preferences"]
@@ -294,6 +294,8 @@ def test_invalid_schema_value_type():
         "name": "$name",
         "invalid_field": 123  # Invalid type - should be string or dict
     }
-    
-    with pytest.raises(ValueError, match="Invalid schema value type for field 'invalid_field'"):
+
+    with pytest.raises(
+        ValueError, match="Invalid schema value type for field 'invalid_field'"
+    ):
         ConfigSchema.from_dict(schema_dict)
