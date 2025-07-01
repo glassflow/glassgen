@@ -1,18 +1,12 @@
 import glassgen
 
 config = {
-    "schema": {
-        "name": "$name",
-        "email": "$email",
-        "country": "$country",
-        "id": "$uuid",
-        "address": "$address",
-        "phone": "$phone_number",
-        "job": "$job",
-        "company": "$company",
-    },
-    "sink": {"type": "csv", "params": {"path": "output.csv"}},
-    "generator": {"rps": 1500, "num_records": 5000},
+    "schema": {"name": "$name", "user": {"email": "$email", "id": "$uuid"}},
+    "generator": {"num_records": 10},
 }
-# Start the generator
-print(glassgen.generate(config=config))
+sink_csv = {"type": "csv", "params": {"path": "output.csv"}}
+config["sink"] = sink_csv
+
+gen = glassgen.generate(config=config)
+for row in gen:
+    print(row)
