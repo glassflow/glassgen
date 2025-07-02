@@ -69,9 +69,39 @@ class GlassGenConfig(BaseModel):
             and self.schema_config
         ):
             key_field = self.generator.event_options.duplication.key_field
-            if key_field not in self.schema_config:
+            if not self._field_exists_in_schema(key_field, self.schema_config):
                 raise ValueError(
                     f"key_field '{key_field}' not found in schema. Available fields: "
-                    f"{', '.join(self.schema_config.keys())}"
+                    f"{', '.join(self._get_all_field_paths(self.schema_config))}"
                 )
         return self
+
+    def _field_exists_in_schema(self, field_path: str, schema: Dict[str, Any]) -> bool:
+        """Check if a field path exists in the schema, supporting nested structures"""
+        if "." not in field_path:
+            return field_path in schema
+        
+        parts = field_path.split(".", 1)
+        current_field = parts[0]
+        remaining_path = parts[1]
+        
+        if current_field not in schema:
+            return False
+        
+        current_value = schema[current_field]
+        if isinstance(current_value, dict):
+            return self._field_exists_in_schema(remaining_path, current_value)
+        else:
+            return False
+
+    def _get_all_field_paths(self, schema: Dict[str, Any], prefix: str = "") -> list[str]:
+        """Get all possible field paths in the schema, including nested ones"""
+        paths = []
+        for key, value in schema.items():
+            current_path = f"{prefix}.{key}" if prefix else key
+            if isinstance(value, dict):
+                paths.append(current_path)
+                paths.extend(self._get_all_field_paths(value, current_path))
+            else:
+                paths.append(current_path)
+        return paths

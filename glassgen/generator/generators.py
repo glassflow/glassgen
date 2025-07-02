@@ -40,6 +40,7 @@ class GeneratorType(str, Enum):
     GREETING = "greeting"
     FLOAT = "float"
     PRICE = "price"
+    PREFIXED_ID = "prefixed_id"
 
 
 def choice_generator(choices: List[str]) -> str:
@@ -68,6 +69,21 @@ def datetime_generator(format_str: str = None) -> str:
         return datetime.now().strftime(format_str)
     else:
         return datetime.now().isoformat()
+
+
+def prefixed_id_generator(prefix: str = "item", min_val: int = 1, max_val: int = 1000) -> str:
+    """Generate a prefixed ID with random number in range
+    
+    Args:
+        prefix: The prefix for the ID (e.g., 'cat', 'prod')
+        min_val: Minimum value for the number part
+        max_val: Maximum value for the number part
+    
+    Returns:
+        A string in format prefix_number (e.g., 'cat_1', 'prod_42')
+    """
+    number = random.randint(min_val, max_val)
+    return f"{prefix}_{number}"
 
 
 class GeneratorRegistry:
@@ -113,6 +129,7 @@ class GeneratorRegistry:
             GeneratorType.GREETING: greeting_generator,
             GeneratorType.FLOAT: self._faker.pyfloat,
             GeneratorType.PRICE: price_generator,
+            GeneratorType.PREFIXED_ID: prefixed_id_generator,
         }
 
     def register_generator(self, name: str, generator: Callable[..., Any]) -> None:

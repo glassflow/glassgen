@@ -80,6 +80,89 @@ def test_uuid_generator():
     assert record["id4"].count("-") == 4
 
 
+def test_prefixed_id_generator():
+    """Test PREFIXED_ID generator"""
+    # Test with default parameters
+    schema_default = ConfigSchema.from_dict({"id": "$prefixed_id"})
+    record_default = schema_default._generate_record()
+    
+    # Check format: prefix_number
+    assert "id" in record_default
+    assert "_" in record_default["id"]
+    prefix, number = record_default["id"].split("_")
+    assert prefix == "item"  # default prefix
+    assert number.isdigit()
+    assert 1 <= int(number) <= 1000  # default range
+    
+    # Test with custom prefix and range
+    schema_custom = ConfigSchema.from_dict({
+        "product_id": "$prefixed_id(prod, 1, 100)",
+        "category_id": "$prefixed_id(cat, 10, 50)"
+    })
+    record_custom = schema_custom._generate_record()
+    
+    # Check product_id format
+    assert "product_id" in record_custom
+    assert record_custom["product_id"].startswith("prod_")
+    prod_prefix, prod_number = record_custom["product_id"].split("_")
+    assert prod_prefix == "prod"
+    assert prod_number.isdigit()
+    assert 1 <= int(prod_number) <= 100
+    
+    # Check category_id format
+    assert "category_id" in record_custom
+    assert record_custom["category_id"].startswith("cat_")
+    cat_prefix, cat_number = record_custom["category_id"].split("_")
+    assert cat_prefix == "cat"
+    assert cat_number.isdigit()
+    assert 10 <= int(cat_number) <= 50
+    
+    # Test with different ranges
+    schema_ranges = ConfigSchema.from_dict({
+        "user_id": "$prefixed_id(user, 1000, 9999)",
+        "order_id": "$prefixed_id(order, 1, 1000)"
+    })
+    record_ranges = schema_ranges._generate_record()
+    
+    # Check user_id range
+    user_prefix, user_number = record_ranges["user_id"].split("_")
+    assert user_prefix == "user"
+    assert 1000 <= int(user_number) <= 9999
+    
+    # Check order_id range
+    order_prefix, order_number = record_ranges["order_id"].split("_")
+    assert order_prefix == "order"
+    assert 1 <= int(order_number) <= 1000
+
+
+def test_prefixed_id_generator_registry():
+    """Test that PREFIXED_ID generator is properly registered"""
+    from glassgen.generator.generators import registry, GeneratorType
+    
+    # Check that the generator is registered
+    assert GeneratorType.PREFIXED_ID in registry.get_supported_generators()
+    
+    # Get the generator function
+    generator_func = registry.get_generator(GeneratorType.PREFIXED_ID)
+    assert callable(generator_func)
+    
+    # Test the generator function directly
+    result = generator_func("test", 1, 10)
+    assert result.startswith("test_")
+    prefix, number = result.split("_")
+    assert prefix == "test"
+    assert number.isdigit()
+    assert 1 <= int(number) <= 10
+    
+    # Test with default parameters
+    result_default = generator_func()
+    assert result_default.startswith("item_")
+    prefix, number = result_default.split("_")
+    assert prefix == "item"
+    assert number.isdigit()
+    assert 1 <= int(number) <= 1000
+
+
 def test_predefined_schema():
     """Test using predefined UserSchema"""
     schema = UserSchema()

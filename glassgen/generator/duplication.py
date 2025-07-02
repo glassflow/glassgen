@@ -16,6 +16,7 @@ class DuplicateController:
         )
         self.target_ratio = self.generator_config.event_options.duplication.ratio
         self.max_size = 1000  # You can make this configurable too
+        self.key_field = self.generator_config.event_options.duplication.key_field
 
     def _parse_time_window(self, time_window: str) -> timedelta:
         """Convert time_window string to timedelta"""
@@ -31,6 +32,24 @@ class DuplicateController:
             return timedelta(days=value)
         else:
             raise ValueError(f"Invalid time window unit: {unit}")
+
+    def _get_nested_field_value(self, record: Dict[str, Any], field_path: str) -> Any:
+        """Extract a nested field value from a record using dot notation"""
+        if "." not in field_path:
+            return record.get(field_path)
+        
+        parts = field_path.split(".", 1)
+        current_field = parts[0]
+        remaining_path = parts[1]
+        
+        if current_field not in record:
+            return None
+        
+        current_value = record[current_field]
+        if isinstance(current_value, dict):
+            return self._get_nested_field_value(current_value, remaining_path)
+        else:
+            return None
 
     def _cleanup_old_duplicates(self):
         """Remove duplicates older than time_window"""
