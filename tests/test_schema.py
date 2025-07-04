@@ -163,6 +163,82 @@ def test_prefixed_id_generator_registry():
     assert 1 <= int(number) <= 1000
 
 
+def test_array_generator():
+    """Test ARRAY generator"""
+    # Test with simple generator (no parameters)
+    schema_simple = ConfigSchema.from_dict({
+        "emails": "$array(email, 3)",
+        "names": "$array(name, 2)"
+    })
+    record_simple = schema_simple._generate_record()
+    
+    # Check emails array
+    assert "emails" in record_simple
+    assert isinstance(record_simple["emails"], list)
+    assert len(record_simple["emails"]) == 3
+    for email in record_simple["emails"]:
+        assert isinstance(email, str)
+        assert "@" in email
+    
+    # Check names array
+    assert "names" in record_simple
+    assert isinstance(record_simple["names"], list)
+    assert len(record_simple["names"]) == 2
+    for name in record_simple["names"]:
+        assert isinstance(name, str)
+        assert " " in name  # Names typically have spaces
+    
+    # Test with generator that has parameters
+    schema_with_params = ConfigSchema.from_dict({
+        "numbers": "$array(intrange, 5, 1, 100)",
+        "choices": "$array(choice, 3, apple, banana, cherry)"
+    })
+    record_with_params = schema_with_params._generate_record()
+    
+    # Check numbers array
+    assert "numbers" in record_with_params
+    assert isinstance(record_with_params["numbers"], list)
+    assert len(record_with_params["numbers"]) == 5
+    for num in record_with_params["numbers"]:
+        assert isinstance(num, int)
+        assert 1 <= num <= 100
+    
+    # Check choices array
+    assert "choices" in record_with_params
+    assert isinstance(record_with_params["choices"], list)
+    assert len(record_with_params["choices"]) == 3
+    for choice in record_with_params["choices"]:
+        assert choice in ["apple", "banana", "cherry"]
+
+
+def test_array_generator_registry():
+    """Test that ARRAY generator is properly registered"""
+    from glassgen.generator.generators import registry, GeneratorType
+    
+    # Check that the generator is registered
+    assert GeneratorType.ARRAY in registry.get_supported_generators()
+    
+    # Get the generator function
+    generator_func = registry.get_generator(GeneratorType.ARRAY)
+    assert callable(generator_func)
+    
+    # Test the generator function directly
+    result = generator_func("email", 3)
+    assert isinstance(result, list)
+    assert len(result) == 3
+    for email in result:
+        assert isinstance(email, str)
+        assert "@" in email
+    
+    # Test with parameters
+    result_with_params = generator_func("intrange", 2, 10, 20)
+    assert isinstance(result_with_params, list)
+    assert len(result_with_params) == 2
+    for num in result_with_params:
+        assert isinstance(num, int)
+        assert 10 <= num <= 20
+
+
 def test_predefined_schema():
     """Test using predefined UserSchema"""
     schema = UserSchema()

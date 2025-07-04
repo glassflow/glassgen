@@ -41,6 +41,7 @@ class GeneratorType(str, Enum):
     FLOAT = "float"
     PRICE = "price"
     PREFIXED_ID = "prefixed_id"
+    ARRAY = "array"
 
 
 def choice_generator(choices: List[str]) -> str:
@@ -84,6 +85,38 @@ def prefixed_id_generator(prefix: str = "item", min_val: int = 1, max_val: int =
     """
     number = random.randint(min_val, max_val)
     return f"{prefix}_{number}"
+
+
+def array_generator(generator_name: str, count: int, *generator_params) -> List[Any]:
+    """Generate an array of values using a specified generator
+    
+    Args:
+        generator_name: The name of the generator to use for each element (e.g., 'string', 'email')
+        count: Number of elements to generate in the array
+        *generator_params: Parameters to pass to the underlying generator
+    
+    Returns:
+        A list of generated values
+    """
+    if count <= 0:
+        raise ValueError("Array count must be greater than 0")
+    
+    # Get the generator function from the registry
+    generator_func = registry.get_generator(generator_name)
+    
+    # Generate the array
+    result = []
+    for _ in range(count):
+        if generator_params:
+            # Handle choice generator specially - it expects a list
+            if generator_name == GeneratorType.CHOICE:
+                result.append(generator_func(list(generator_params)))
+            else:
+                result.append(generator_func(*generator_params))
+        else:
+            result.append(generator_func())
+    
+    return result
 
 
 class GeneratorRegistry:
@@ -130,6 +163,7 @@ class GeneratorRegistry:
             GeneratorType.FLOAT: self._faker.pyfloat,
             GeneratorType.PRICE: price_generator,
             GeneratorType.PREFIXED_ID: prefixed_id_generator,
+            GeneratorType.ARRAY: array_generator,
         }
 
     def register_generator(self, name: str, generator: Callable[..., Any]) -> None:

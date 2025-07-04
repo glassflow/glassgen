@@ -58,6 +58,30 @@ class ConfigSchema(BaseSchema, BaseModel):
                     if generator_name == GeneratorType.CHOICE:
                         # Split by comma but preserve quoted strings
                         params = [p.strip().strip("\"'") for p in params_str.split(",")]
+                    elif generator_name == GeneratorType.ARRAY:
+                        # Handle array generator: format is "generator_name, count, param1, param2, ..."
+                        param_parts = [p.strip() for p in params_str.split(",")]
+                        if len(param_parts) < 2:
+                            raise ValueError(f"Array generator requires at least generator name and count: {value}")
+                        
+                        # First parameter is the generator name (without $)
+                        generator_name_param = param_parts[0].strip("$")
+                        # Second parameter is the count
+                        try:
+                            count = int(param_parts[1])
+                        except ValueError:
+                            raise ValueError(f"Array count must be an integer: {param_parts[1]}")
+                        
+                        # Remaining parameters are for the nested generator
+                        nested_params = []
+                        for p in param_parts[2:]:
+                            # Convert numeric parameters
+                            if p.isdigit():
+                                nested_params.append(int(p))
+                            else:
+                                nested_params.append(p)
+                        
+                        params = [generator_name_param, count] + nested_params
                     else:
                         # Simple parameter parsing for other generators
                         params = [p.strip() for p in params_str.split(",")]
@@ -108,6 +132,9 @@ class ConfigSchema(BaseSchema, BaseModel):
                         if field.generator == GeneratorType.CHOICE:
                             # For choice generator, pass the list directly
                             record[field_name] = generator(field.params)
+                        elif field.generator == GeneratorType.ARRAY:
+                            # For array generator, pass parameters as-is
+                            record[field_name] = generator(*field.params)
                         else:
                             # For other generators, unpack the parameters
                             record[field_name] = generator(*field.params)
