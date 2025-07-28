@@ -87,11 +87,14 @@ class ConfigSchema(BaseSchema, BaseModel):
                         params = [p.strip() for p in params_str.split(",")]
                         # Convert numeric parameters
                         if generator_name == GeneratorType.PRICE:
-                            # Handle price generator specifically - convert all params to float
+                            # Handle price generator specifically - convert first two params to float, third to int
                             converted_params = []
-                            for p in params:
+                            for i, p in enumerate(params):
                                 try:
-                                    converted_params.append(float(p))
+                                    if i < 2:  # First two parameters are min_price and max_price (float)
+                                        converted_params.append(float(p))
+                                    else:  # Third parameter is decimal_places (int)
+                                        converted_params.append(int(p))
                                 except ValueError:
                                     converted_params.append(p)
                             params = converted_params

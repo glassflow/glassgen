@@ -237,7 +237,7 @@ generate(config, sink=PrintSink())
 - `$uuid`: Random UUID
 - `$uuid4`: Random UUID4
 - `$float`: Random floating point number
-- `$price`: Random price value with 2 decimal places (e.g., 99.99)
+- `$price`: Random price value with 2 decimal places (e.g., 99.99). Can specify custom range and decimal places: `$price(1.2, 2.3, 3)`
 
 ### Personal Information
 - `$name`: Random full name

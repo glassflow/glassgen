@@ -441,7 +441,9 @@ def test_price_generator_with_float_params():
     schema = ConfigSchema.from_dict({
         "price1": "$price(1.2, 2.3)",
         "price2": "$price(10.5, 20.7)",
-        "price3": "$price"  # Test default parameters
+        "price3": "$price",  # Test default parameters
+        "price4": "$price(1.0, 10.0, 3)",  # Test with 3 decimal places
+        "price5": "$price(0.1, 1.0, 1)"   # Test with 1 decimal place
     })
 
     record = schema._generate_record()
@@ -450,14 +452,26 @@ def test_price_generator_with_float_params():
     assert 1.2 <= record["price1"] <= 2.3
     assert 10.5 <= record["price2"] <= 20.7
     assert 0.99 <= record["price3"] <= 9999.99  # Default range
+    assert 1.0 <= record["price4"] <= 10.0
+    assert 0.1 <= record["price5"] <= 1.0
 
-    # Check that all prices are floats with 2 decimal places
+    # Check that all prices are floats with correct decimal places
     for price_key in ["price1", "price2", "price3"]:
         price = record[price_key]
         assert isinstance(price, float)
-        # Check that it has at most 2 decimal places
+        # Check that it has at most 2 decimal places (default)
         decimal_str = str(price).split('.')[-1] if '.' in str(price) else ''
         assert len(decimal_str) <= 2
+    
+    # Check price4 has 3 decimal places
+    price4_str = str(record["price4"])
+    decimal_str = price4_str.split('.')[-1] if '.' in price4_str else ''
+    assert len(decimal_str) <= 3
+    
+    # Check price5 has 1 decimal place
+    price5_str = str(record["price5"])
+    decimal_str = price5_str.split('.')[-1] if '.' in price5_str else ''
+    assert len(decimal_str) <= 1
 
 
 def test_invalid_schema_value_type():

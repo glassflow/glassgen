@@ -84,7 +84,13 @@ Generates a random floating point number.
     "field": "$price"
 }
 ```
-Generates a random price value with 2 decimal places (e.g., 99.99).
+Generates a random price value with 2 decimal places (e.g., 99.99). You can also specify custom range and decimal places:
+```json
+{
+    "field": "$price(1.2, 2.3, 3)"
+}
+```
+This generates a price between 1.2 and 2.3 with 3 decimal places.
 
 ### Greeting Generator
 ```json

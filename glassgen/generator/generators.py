@@ -59,9 +59,18 @@ def greeting_generator() -> str:
     return random.choice(["Hello", "Hi", "Hey", "Greetings", "Welcome"])
 
 
-def price_generator(min_price: float = 0.99, max_price: float = 9999.99, ) -> float:
-    """Generate a random price value with 2 decimal places"""
-    return round(random.uniform(min_price, max_price), 2)
+def price_generator(min_price: float = 0.99, max_price: float = 9999.99, decimal_places: int = 2) -> float:
+    """Generate a random price value with specified decimal places
+    
+    Args:
+        min_price: Minimum price value
+        max_price: Maximum price value
+        decimal_places: Number of decimal places (default: 2)
+    
+    Returns:
+        A random price value rounded to the specified decimal places
+    """
+    return round(random.uniform(min_price, max_price), decimal_places)
 
 
 def datetime_generator(format_str: str = None) -> str:
