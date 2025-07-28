@@ -86,7 +86,18 @@ class ConfigSchema(BaseSchema, BaseModel):
                         # Simple parameter parsing for other generators
                         params = [p.strip() for p in params_str.split(",")]
                         # Convert numeric parameters
-                        params = [int(p) if p.isdigit() else p for p in params]
+                        if generator_name == GeneratorType.PRICE:
+                            # Handle price generator specifically - convert all params to float
+                            converted_params = []
+                            for p in params:
+                                try:
+                                    converted_params.append(float(p))
+                                except ValueError:
+                                    converted_params.append(p)
+                            params = converted_params
+                        else:
+                            # Original logic for other generators
+                            params = [int(p) if p.isdigit() else p for p in params]
 
                 fields[name] = SchemaField(
                     name=name, generator=generator_name, params=params

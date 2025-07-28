@@ -436,6 +436,30 @@ def test_mixed_flat_and_nested_schema():
     assert record["preferences"]["notifications"] in ["true", "false"]
 
 
+def test_price_generator_with_float_params():
+    """Test price generator with float parameters"""
+    schema = ConfigSchema.from_dict({
+        "price1": "$price(1.2, 2.3)",
+        "price2": "$price(10.5, 20.7)",
+        "price3": "$price"  # Test default parameters
+    })
+
+    record = schema._generate_record()
+
+    # Check that prices are generated within the specified ranges
+    assert 1.2 <= record["price1"] <= 2.3
+    assert 10.5 <= record["price2"] <= 20.7
+    assert 0.99 <= record["price3"] <= 9999.99  # Default range
+
+    # Check that all prices are floats with 2 decimal places
+    for price_key in ["price1", "price2", "price3"]:
+        price = record[price_key]
+        assert isinstance(price, float)
+        # Check that it has at most 2 decimal places
+        decimal_str = str(price).split('.')[-1] if '.' in str(price) else ''
+        assert len(decimal_str) <= 2
+
+
 def test_invalid_schema_value_type():
     """Test that invalid schema value types raise appropriate errors"""
     schema_dict = {
