@@ -7,6 +7,11 @@ from glassgen.schema import BaseSchema
 from glassgen.schema.schema import ConfigSchema
 from glassgen.sinks import BaseSink, SinkFactory, YieldSink
 
+def generate_one(schema_dict: Dict[str, Any]):
+    schema = ConfigSchema.from_dict(schema_dict)
+    schema.validate()
+    return schema._generate_record()
+    
 
 def generate(
     config: Union[Dict[str, Any], GlassGenConfig],
