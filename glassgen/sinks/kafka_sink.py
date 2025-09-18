@@ -32,7 +32,7 @@ class KafkaSink(BaseSink):
     def publish(self, record: Dict[str, Any]) -> None:
         self.publish_bulk([record])
 
-    def publish_bulk(self, records: List[Dict[str, Any]]) -> None:
+    def publish_bulk(self, records: List[Dict[str, Any]]) -> None:        
         for msg in records:
             message_value = json.dumps(msg) if isinstance(msg, dict) else msg
             self.producer.produce(
