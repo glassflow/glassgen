@@ -46,7 +46,7 @@ class Generator:
         """
         Generate records and publish them to the sink.
         """
-        print("Glassgen: Generating records with presice rps control")
+        #print("Glassgen: Generating records with presice rps control")
         start_time = time.time()
         count = 0
         events_to_send = self.generator_config.num_records
@@ -67,8 +67,8 @@ class Generator:
 
             yield records
 
-            print(f"Generated {count} records")
-            print(f"Actual batch size: {actual_batch_size}")
+            #print(f"Generated {count} records")
+            #print(f"Actual batch size: {actual_batch_size}")
             if self.batch_controller:
                 self.batch_controller.record_sent(actual_batch_size)
 
@@ -84,7 +84,7 @@ class Generator:
         return response
 
     def generate_simple(self):
-        print("Glassgen: Generating records with fixed batch size of", self.max_bulk_size)
+        #print("Glassgen: Generating records with fixed batch size of", self.max_bulk_size)
         start_time = time.time()
         count = 0
         events_to_send = self.generator_config.num_records
