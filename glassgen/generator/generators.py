@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List
+from urllib.parse import quote
 
 from faker import Faker
 
@@ -42,6 +43,7 @@ class GeneratorType(str, Enum):
     PRICE = "price"
     PREFIXED_ID = "prefixed_id"
     ARRAY = "array"
+    QUERY_STRING = "query_string"
 
 
 def choice_generator(choices: List[str]) -> str:
@@ -128,6 +130,57 @@ def array_generator(generator_name: str, count: int, *generator_params) -> List[
     return result
 
 
+def query_string_generator() -> str:
+    """Generate a query string in the format: v=2&cid=...&sid=...&sct=...&seg=...&_et=...&en=...&ep.event_id=...&dt=...&ul=...&ur=...
+    
+    Returns:
+        A query string with dynamically generated values
+    """
+    # Generate random values
+    cid_part1 = random.randint(100000000, 999999999)
+    cid_part2 = random.randint(1000000000000, 9999999999999)
+    cid = f"{cid_part1}.{cid_part2}"
+    
+    sid = random.randint(1000000000, 9999999999)
+    sct = random.randint(1, 10)
+    seg = random.choice([0, 1])
+    _et = random.randint(0, 30000)
+    
+    en_choices = ["page_view", "scroll", "click", "purchase", "add_to_cart"]
+    en = random.choice(en_choices)
+    
+    event_id_part1 = random.randint(1000000000000, 9999999999999)
+    event_id_part2 = random.randint(1, 9)
+    ep_event_id = f"{event_id_part1}.{event_id_part2}"
+    
+    page_titles = ["Home Page", "Product Page", "Checkout", "About Us", "Test Page Title"]
+    dt = quote(random.choice(page_titles))
+    
+    ul_choices = ["en-us", "de-de", "fr-fr", "es-es"]
+    ul = random.choice(ul_choices)
+    
+    # US state codes
+    us_states = ["US-CA", "US-NY", "US-TX", "US-FL", "US-IL", "US-PA", "US-OH", "US-GA", "US-NC", "US-MI"]
+    ur = random.choice(us_states)
+    
+    # Build query string
+    query_parts = [
+        f"v=2",
+        f"cid={cid}",
+        f"sid={sid}",
+        f"sct={sct}",
+        f"seg={seg}",
+        f"_et={_et}",
+        f"en={en}",
+        f"ep.event_id={ep_event_id}",
+        f"dt={dt}",
+        f"ul={ul}",
+        f"ur={ur}"
+    ]
+    
+    return "&".join(query_parts)
+
+
 class GeneratorRegistry:
     """Registry for data generators"""
 
@@ -173,6 +226,7 @@ class GeneratorRegistry:
             GeneratorType.PRICE: price_generator,
             GeneratorType.PREFIXED_ID: prefixed_id_generator,
             GeneratorType.ARRAY: array_generator,
+            GeneratorType.QUERY_STRING: query_string_generator,
         }
 
     def register_generator(self, name: str, generator: Callable[..., Any]) -> None:
