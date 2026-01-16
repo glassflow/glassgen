@@ -7,10 +7,10 @@ config_basic = {
         "user_id": "$prefixed_id(user, 1, 1000)",
         "emails": "$array(email, 3)",
         "names": "$array(name, 2)",
-        "phone_numbers": "$array(phone_number, 2)"
+        "phone_numbers": "$array(phone_number, 2)",
     },
     "generator": {"num_records": 3},
-    "sink": {"type": "csv", "params": {"path": "output_arrays_basic.csv"}}
+    "sink": {"type": "csv", "params": {"path": "output_arrays_basic.csv"}},
 }
 
 gen_basic = glassgen.generate(config=config_basic)
@@ -24,10 +24,10 @@ config_params = {
         "product_id": "$prefixed_id(prod, 1, 100)",
         "prices": "$array(price, 5)",
         "quantities": "$array(intrange, 5, 1, 50)",
-        "categories": "$array(choice, 3, electronics, clothing, books, sports, home)"
+        "categories": "$array(choice, 3, electronics, clothing, books, sports, home)",
     },
     "generator": {"num_records": 3},
-    "sink": {"type": "csv", "params": {"path": "output_arrays_params.csv"}}
+    "sink": {"type": "csv", "params": {"path": "output_arrays_params.csv"}},
 }
 
 gen_params = glassgen.generate(config=config_params)
@@ -43,10 +43,10 @@ config_mixed = {
         "order_date": "$datetime",
         "product_ids": "$array(prefixed_id, 3, prod, 1, 100)",
         "quantities": "$array(intrange, 3, 1, 10)",
-        "total_amount": "$price"
+        "total_amount": "$price",
     },
     "generator": {"num_records": 3},
-    "sink": {"type": "csv", "params": {"path": "output_arrays_mixed.csv"}}
+    "sink": {"type": "csv", "params": {"path": "output_arrays_mixed.csv"}},
 }
 
 gen_mixed = glassgen.generate(config=config_mixed)
@@ -60,19 +60,19 @@ config_nested = {
         "store": {
             "store_id": "$prefixed_id(store, 1, 50)",
             "store_name": "$company",
-            "manager_emails": "$array(email, 2)"
+            "manager_emails": "$array(email, 2)",
         },
         "products": {
             "product_ids": "$array(prefixed_id, 4, prod, 1, 1000)",
             "product_names": "$array(company, 4)",
-            "prices": "$array(price, 4)"
+            "prices": "$array(price, 4)",
         },
-        "revenue": "$price"
+        "revenue": "$price",
     },
     "generator": {"num_records": 2},
-    "sink": {"type": "csv", "params": {"path": "output_arrays_nested.csv"}}
+    "sink": {"type": "csv", "params": {"path": "output_arrays_nested.csv"}},
 }
 
 gen_nested = glassgen.generate(config=config_nested)
 for row in gen_nested:
-    print(row) 
+    print(row)

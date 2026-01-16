@@ -85,7 +85,7 @@ def test_prefixed_id_generator():
     # Test with default parameters
     schema_default = ConfigSchema.from_dict({"id": "$prefixed_id"})
     record_default = schema_default._generate_record()
-    
+
     # Check format: prefix_number
     assert "id" in record_default
     assert "_" in record_default["id"]
@@ -93,14 +93,16 @@ def test_prefixed_id_generator():
     assert prefix == "item"  # default prefix
     assert number.isdigit()
     assert 1 <= int(number) <= 1000  # default range
-    
+
     # Test with custom prefix and range
-    schema_custom = ConfigSchema.from_dict({
-        "product_id": "$prefixed_id(prod, 1, 100)",
-        "category_id": "$prefixed_id(cat, 10, 50)"
-    })
+    schema_custom = ConfigSchema.from_dict(
+        {
+            "product_id": "$prefixed_id(prod, 1, 100)",
+            "category_id": "$prefixed_id(cat, 10, 50)",
+        }
+    )
     record_custom = schema_custom._generate_record()
-    
+
     # Check product_id format
     assert "product_id" in record_custom
     assert record_custom["product_id"].startswith("prod_")
@@ -108,7 +110,7 @@ def test_prefixed_id_generator():
     assert prod_prefix == "prod"
     assert prod_number.isdigit()
     assert 1 <= int(prod_number) <= 100
-    
+
     # Check category_id format
     assert "category_id" in record_custom
     assert record_custom["category_id"].startswith("cat_")
@@ -116,19 +118,21 @@ def test_prefixed_id_generator():
     assert cat_prefix == "cat"
     assert cat_number.isdigit()
     assert 10 <= int(cat_number) <= 50
-    
+
     # Test with different ranges
-    schema_ranges = ConfigSchema.from_dict({
-        "user_id": "$prefixed_id(user, 1000, 9999)",
-        "order_id": "$prefixed_id(order, 1, 1000)"
-    })
+    schema_ranges = ConfigSchema.from_dict(
+        {
+            "user_id": "$prefixed_id(user, 1000, 9999)",
+            "order_id": "$prefixed_id(order, 1, 1000)",
+        }
+    )
     record_ranges = schema_ranges._generate_record()
-    
+
     # Check user_id range
     user_prefix, user_number = record_ranges["user_id"].split("_")
     assert user_prefix == "user"
     assert 1000 <= int(user_number) <= 9999
-    
+
     # Check order_id range
     order_prefix, order_number = record_ranges["order_id"].split("_")
     assert order_prefix == "order"
@@ -137,15 +141,15 @@ def test_prefixed_id_generator():
 
 def test_prefixed_id_generator_registry():
     """Test that PREFIXED_ID generator is properly registered"""
-    from glassgen.generator.generators import registry, GeneratorType
-    
+    from glassgen.generator.generators import GeneratorType, registry
+
     # Check that the generator is registered
     assert GeneratorType.PREFIXED_ID in registry.get_supported_generators()
-    
+
     # Get the generator function
     generator_func = registry.get_generator(GeneratorType.PREFIXED_ID)
     assert callable(generator_func)
-    
+
     # Test the generator function directly
     result = generator_func("test", 1, 10)
     assert result.startswith("test_")
@@ -153,7 +157,7 @@ def test_prefixed_id_generator_registry():
     assert prefix == "test"
     assert number.isdigit()
     assert 1 <= int(number) <= 10
-    
+
     # Test with default parameters
     result_default = generator_func()
     assert result_default.startswith("item_")
@@ -166,12 +170,11 @@ def test_prefixed_id_generator_registry():
 def test_array_generator():
     """Test ARRAY generator"""
     # Test with simple generator (no parameters)
-    schema_simple = ConfigSchema.from_dict({
-        "emails": "$array(email, 3)",
-        "names": "$array(name, 2)"
-    })
+    schema_simple = ConfigSchema.from_dict(
+        {"emails": "$array(email, 3)", "names": "$array(name, 2)"}
+    )
     record_simple = schema_simple._generate_record()
-    
+
     # Check emails array
     assert "emails" in record_simple
     assert isinstance(record_simple["emails"], list)
@@ -179,7 +182,7 @@ def test_array_generator():
     for email in record_simple["emails"]:
         assert isinstance(email, str)
         assert "@" in email
-    
+
     # Check names array
     assert "names" in record_simple
     assert isinstance(record_simple["names"], list)
@@ -187,14 +190,16 @@ def test_array_generator():
     for name in record_simple["names"]:
         assert isinstance(name, str)
         assert " " in name  # Names typically have spaces
-    
+
     # Test with generator that has parameters
-    schema_with_params = ConfigSchema.from_dict({
-        "numbers": "$array(intrange, 5, 1, 100)",
-        "choices": "$array(choice, 3, apple, banana, cherry)"
-    })
+    schema_with_params = ConfigSchema.from_dict(
+        {
+            "numbers": "$array(intrange, 5, 1, 100)",
+            "choices": "$array(choice, 3, apple, banana, cherry)",
+        }
+    )
     record_with_params = schema_with_params._generate_record()
-    
+
     # Check numbers array
     assert "numbers" in record_with_params
     assert isinstance(record_with_params["numbers"], list)
@@ -202,7 +207,7 @@ def test_array_generator():
     for num in record_with_params["numbers"]:
         assert isinstance(num, int)
         assert 1 <= num <= 100
-    
+
     # Check choices array
     assert "choices" in record_with_params
     assert isinstance(record_with_params["choices"], list)
@@ -213,15 +218,15 @@ def test_array_generator():
 
 def test_array_generator_registry():
     """Test that ARRAY generator is properly registered"""
-    from glassgen.generator.generators import registry, GeneratorType
-    
+    from glassgen.generator.generators import GeneratorType, registry
+
     # Check that the generator is registered
     assert GeneratorType.ARRAY in registry.get_supported_generators()
-    
+
     # Get the generator function
     generator_func = registry.get_generator(GeneratorType.ARRAY)
     assert callable(generator_func)
-    
+
     # Test the generator function directly
     result = generator_func("email", 3)
     assert isinstance(result, list)
@@ -229,7 +234,7 @@ def test_array_generator_registry():
     for email in result:
         assert isinstance(email, str)
         assert "@" in email
-    
+
     # Test with parameters
     result_with_params = generator_func("intrange", 2, 10, 20)
     assert isinstance(result_with_params, list)
@@ -438,13 +443,15 @@ def test_mixed_flat_and_nested_schema():
 
 def test_price_generator_with_float_params():
     """Test price generator with float parameters"""
-    schema = ConfigSchema.from_dict({
-        "price1": "$price(1.2, 2.3)",
-        "price2": "$price(10.5, 20.7)",
-        "price3": "$price",  # Test default parameters
-        "price4": "$price(1.0, 10.0, 3)",  # Test with 3 decimal places
-        "price5": "$price(0.1, 1.0, 1)"   # Test with 1 decimal place
-    })
+    schema = ConfigSchema.from_dict(
+        {
+            "price1": "$price(1.2, 2.3)",
+            "price2": "$price(10.5, 20.7)",
+            "price3": "$price",  # Test default parameters
+            "price4": "$price(1.0, 10.0, 3)",  # Test with 3 decimal places
+            "price5": "$price(0.1, 1.0, 1)",  # Test with 1 decimal place
+        }
+    )
 
     record = schema._generate_record()
 
@@ -460,17 +467,17 @@ def test_price_generator_with_float_params():
         price = record[price_key]
         assert isinstance(price, float)
         # Check that it has at most 2 decimal places (default)
-        decimal_str = str(price).split('.')[-1] if '.' in str(price) else ''
+        decimal_str = str(price).split(".")[-1] if "." in str(price) else ""
         assert len(decimal_str) <= 2
-    
+
     # Check price4 has 3 decimal places
     price4_str = str(record["price4"])
-    decimal_str = price4_str.split('.')[-1] if '.' in price4_str else ''
+    decimal_str = price4_str.split(".")[-1] if "." in price4_str else ""
     assert len(decimal_str) <= 3
-    
+
     # Check price5 has 1 decimal place
     price5_str = str(record["price5"])
-    decimal_str = price5_str.split('.')[-1] if '.' in price5_str else ''
+    decimal_str = price5_str.split(".")[-1] if "." in price5_str else ""
     assert len(decimal_str) <= 1
 
 
