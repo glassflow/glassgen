@@ -59,19 +59,25 @@ class ConfigSchema(BaseSchema, BaseModel):
                         # Split by comma but preserve quoted strings
                         params = [p.strip().strip("\"'") for p in params_str.split(",")]
                     elif generator_name == GeneratorType.ARRAY:
-                        # Handle array generator: format is "generator_name, count, param1, param2, ..."
+                        # Handle array generator: format is "generator_name, count,
+                        # param1, param2, ..."
                         param_parts = [p.strip() for p in params_str.split(",")]
                         if len(param_parts) < 2:
-                            raise ValueError(f"Array generator requires at least generator name and count: {value}")
-                        
+                            raise ValueError(
+                                f"Array generator requires at least generator name and \
+                                    count: {value}"
+                            )
+
                         # First parameter is the generator name (without $)
                         generator_name_param = param_parts[0].strip("$")
                         # Second parameter is the count
                         try:
                             count = int(param_parts[1])
-                        except ValueError:
-                            raise ValueError(f"Array count must be an integer: {param_parts[1]}")
-                        
+                        except ValueError as e:
+                            raise ValueError(
+                                f"Array count must be an integer: {param_parts[1]}"
+                            ) from e
+
                         # Remaining parameters are for the nested generator
                         nested_params = []
                         for p in param_parts[2:]:
@@ -80,18 +86,20 @@ class ConfigSchema(BaseSchema, BaseModel):
                                 nested_params.append(int(p))
                             else:
                                 nested_params.append(p)
-                        
+
                         params = [generator_name_param, count] + nested_params
                     else:
                         # Simple parameter parsing for other generators
                         params = [p.strip() for p in params_str.split(",")]
                         # Convert numeric parameters
                         if generator_name == GeneratorType.PRICE:
-                            # Handle price generator specifically - convert first two params to float, third to int
+                            # Handle price generator specifically -
+                            # convert first two params to float, third to int
                             converted_params = []
                             for i, p in enumerate(params):
                                 try:
-                                    if i < 2:  # First two parameters are min_price and max_price (float)
+                                    if i < 2:  # First two parameters are min_price and
+                                        # max_price (float)
                                         converted_params.append(float(p))
                                     else:  # Third parameter is decimal_places (int)
                                         converted_params.append(int(p))

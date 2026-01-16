@@ -12,7 +12,7 @@ warnings.filterwarnings(
     message=r".*urllib3 v2 only supports OpenSSL 1\.1\.1\+.*",
 )
 
-from glassgen import generate
+from glassgen import generate  # noqa
 
 
 @click.group()

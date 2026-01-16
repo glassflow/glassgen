@@ -37,14 +37,14 @@ class DuplicateController:
         """Extract a nested field value from a record using dot notation"""
         if "." not in field_path:
             return record.get(field_path)
-        
+
         parts = field_path.split(".", 1)
         current_field = parts[0]
         remaining_path = parts[1]
-        
+
         if current_field not in record:
             return None
-        
+
         current_value = record[current_field]
         if isinstance(current_value, dict):
             return self._get_nested_field_value(current_value, remaining_path)
