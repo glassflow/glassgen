@@ -61,14 +61,16 @@ def greeting_generator() -> str:
     return random.choice(["Hello", "Hi", "Hey", "Greetings", "Welcome"])
 
 
-def price_generator(min_price: float = 0.99, max_price: float = 9999.99, decimal_places: int = 2) -> float:
+def price_generator(
+    min_price: float = 0.99, max_price: float = 9999.99, decimal_places: int = 2
+) -> float:
     """Generate a random price value with specified decimal places
-    
+
     Args:
         min_price: Minimum price value
         max_price: Maximum price value
         decimal_places: Number of decimal places (default: 2)
-    
+
     Returns:
         A random price value rounded to the specified decimal places
     """
@@ -83,14 +85,16 @@ def datetime_generator(format_str: str = None) -> str:
         return datetime.now().isoformat()
 
 
-def prefixed_id_generator(prefix: str = "item", min_val: int = 1, max_val: int = 1000) -> str:
+def prefixed_id_generator(
+    prefix: str = "item", min_val: int = 1, max_val: int = 1000
+) -> str:
     """Generate a prefixed ID with random number in range
-    
+
     Args:
         prefix: The prefix for the ID (e.g., 'cat', 'prod')
         min_val: Minimum value for the number part
         max_val: Maximum value for the number part
-    
+
     Returns:
         A string in format prefix_number (e.g., 'cat_1', 'prod_42')
     """
@@ -100,21 +104,22 @@ def prefixed_id_generator(prefix: str = "item", min_val: int = 1, max_val: int =
 
 def array_generator(generator_name: str, count: int, *generator_params) -> List[Any]:
     """Generate an array of values using a specified generator
-    
+
     Args:
-        generator_name: The name of the generator to use for each element (e.g., 'string', 'email')
+        generator_name: The name of the generator to use for each element
+        (e.g., 'string', 'email')
         count: Number of elements to generate in the array
         *generator_params: Parameters to pass to the underlying generator
-    
+
     Returns:
         A list of generated values
     """
     if count <= 0:
         raise ValueError("Array count must be greater than 0")
-    
+
     # Get the generator function from the registry
     generator_func = registry.get_generator(generator_name)
-    
+
     # Generate the array
     result = []
     for _ in range(count):
@@ -126,13 +131,15 @@ def array_generator(generator_name: str, count: int, *generator_params) -> List[
                 result.append(generator_func(*generator_params))
         else:
             result.append(generator_func())
-    
+
     return result
 
 
 def query_string_generator() -> str:
-    """Generate a query string in the format: v=2&cid=...&sid=...&sct=...&seg=...&_et=...&en=...&ep.event_id=...&dt=...&ul=...&ur=...
-    
+    """
+    Generate a query string in the format:
+    v=2&cid=...&sid=...&sct=...&seg=...&_et=...&en=...&ep.event_id=...&dt=...&ul=...&ur=...
+
     Returns:
         A query string with dynamically generated values
     """
@@ -140,32 +147,49 @@ def query_string_generator() -> str:
     cid_part1 = random.randint(100000000, 999999999)
     cid_part2 = random.randint(1000000000000, 9999999999999)
     cid = f"{cid_part1}.{cid_part2}"
-    
+
     sid = random.randint(1000000000, 9999999999)
     sct = random.randint(1, 10)
     seg = random.choice([0, 1])
     _et = random.randint(0, 30000)
-    
+
     en_choices = ["page_view", "scroll", "click", "purchase", "add_to_cart"]
     en = random.choice(en_choices)
-    
+
     event_id_part1 = random.randint(1000000000000, 9999999999999)
     event_id_part2 = random.randint(1, 9)
     ep_event_id = f"{event_id_part1}.{event_id_part2}"
-    
-    page_titles = ["Home Page", "Product Page", "Checkout", "About Us", "Test Page Title"]
+
+    page_titles = [
+        "Home Page",
+        "Product Page",
+        "Checkout",
+        "About Us",
+        "Test Page Title",
+    ]
     dt = quote(random.choice(page_titles))
-    
+
     ul_choices = ["en-us", "de-de", "fr-fr", "es-es"]
     ul = random.choice(ul_choices)
-    
+
     # US state codes
-    us_states = ["US-CA", "US-NY", "US-TX", "US-FL", "US-IL", "US-PA", "US-OH", "US-GA", "US-NC", "US-MI"]
+    us_states = [
+        "US-CA",
+        "US-NY",
+        "US-TX",
+        "US-FL",
+        "US-IL",
+        "US-PA",
+        "US-OH",
+        "US-GA",
+        "US-NC",
+        "US-MI",
+    ]
     ur = random.choice(us_states)
-    
+
     # Build query string
     query_parts = [
-        f"v=2",
+        "v=2",
         f"cid={cid}",
         f"sid={sid}",
         f"sct={sct}",
@@ -175,9 +199,9 @@ def query_string_generator() -> str:
         f"ep.event_id={ep_event_id}",
         f"dt={dt}",
         f"ul={ul}",
-        f"ur={ur}"
+        f"ur={ur}",
     ]
-    
+
     return "&".join(query_parts)
 
 

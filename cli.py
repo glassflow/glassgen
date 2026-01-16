@@ -1,9 +1,18 @@
 import json
+import warnings
 from typing import Optional
 
 import click
 
-from glassgen import generate
+# urllib3 v2 (pulled in via requests) may emit a startup warning on some Python builds
+# (e.g., LibreSSL): "urllib3 v2 only supports OpenSSL 1.1.1+ ..."
+# We suppress only that specific warning in the CLI to keep output clean.
+warnings.filterwarnings(
+    "ignore",
+    message=r".*urllib3 v2 only supports OpenSSL 1\.1\.1\+.*",
+)
+
+from glassgen import generate  # noqa
 
 
 @click.group()

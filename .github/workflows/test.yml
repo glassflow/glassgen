@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-python@v5
         id: setup-python
         with:
-          python-version-file: "pyproject.toml"
+          python-version: "3.11"
       
       - name: Install dependencies
         run: |
@@ -58,12 +58,12 @@ jobs:
           pytest --cov=glassgen --cov-report=term-missing
 
       - name: Generate coverage report
-        if: matrix.python-version == '3.8'
+        if: matrix.python-version == '3.11'
         run: |
           pytest --cov=glassgen --cov-report=xml:coverage.xml
 
       - name: Pytest coverage comment
-        if: matrix.python-version == '3.8'
+        if: matrix.python-version == '3.11'
         id: coverageComment
         uses: MishaKav/pytest-coverage-comment@main
         with:
@@ -79,7 +79,7 @@ jobs:
           unique-id-for-comment: "python-coverage"
 
       - name: Update README with coverage badge
-        if: matrix.python-version == '3.8'
+        if: matrix.python-version == '3.11'
         run: |
           # Extract coverage percentage and color from the coverageComment step
           COVERAGE_PERCENTAGE=$(echo "${{ steps.coverageComment.outputs.coverage }}" | grep -o '[0-9]*%' | tr -d '%')
@@ -95,12 +95,12 @@ jobs:
           <!-- Pytest Coverage Comment:End -->" README.md
 
       - name: Clean up coverage file
-        if: matrix.python-version == '3.8'
+        if: matrix.python-version == '3.11'
         run: |
           rm -f coverage.xml
 
       - name: Commit and push README changes
-        if: matrix.python-version == '3.8'
+        if: matrix.python-version == '3.11'
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

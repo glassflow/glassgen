@@ -80,21 +80,23 @@ class GlassGenConfig(BaseModel):
         """Check if a field path exists in the schema, supporting nested structures"""
         if "." not in field_path:
             return field_path in schema
-        
+
         parts = field_path.split(".", 1)
         current_field = parts[0]
         remaining_path = parts[1]
-        
+
         if current_field not in schema:
             return False
-        
+
         current_value = schema[current_field]
         if isinstance(current_value, dict):
             return self._field_exists_in_schema(remaining_path, current_value)
         else:
             return False
 
-    def _get_all_field_paths(self, schema: Dict[str, Any], prefix: str = "") -> list[str]:
+    def _get_all_field_paths(
+        self, schema: Dict[str, Any], prefix: str = ""
+    ) -> list[str]:
         """Get all possible field paths in the schema, including nested ones"""
         paths = []
         for key, value in schema.items():

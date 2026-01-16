@@ -15,7 +15,7 @@
     <img src="https://github.com/glassflow/glassgen/workflows/Test/badge.svg?labelColor=&color=e69e3a">
   </a>
 <!-- Pytest Coverage Comment:Begin -->
-  <img src=https://img.shields.io/badge/coverage-93%25-brightgreen>
+  <img src=https://img.shields.io/badge/coverage-84%25-green>
 <!-- Pytest Coverage Comment:End -->
 </p>
 
