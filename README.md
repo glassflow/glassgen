@@ -188,7 +188,6 @@ for item in gen:
     print(item)
 ```
 
-
 ### Custom Sink
 You can create your own sink by extending the `BaseSink` class:
 
