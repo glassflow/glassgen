@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Union
 from typing import Generator as PyGenerator
 
-from glassgen.config import ConfigError, GlassGenConfig, validate_config
+from glassgen.config import ConfigError, GlassGenConfig, SinkConfig, validate_config
 from glassgen.generator import Generator
 from glassgen.schema import BaseSchema
 from glassgen.schema.schema import ConfigSchema
@@ -17,7 +17,7 @@ def generate_one(schema_dict: Dict[str, Any]):
 def generate(
     config: Union[Dict[str, Any], GlassGenConfig],
     schema: Optional[BaseSchema] = None,
-    sink: Optional[BaseSink] = None,
+    sink: Optional[Union[BaseSink, Dict[str, Any]]] = None,
 ) -> Union[Dict[str, Any], PyGenerator[Dict[str, Any], None, Dict[str, Any]]]:
     """
     Generate data based on the provided configuration.
@@ -25,7 +25,7 @@ def generate(
     Args:
         config: Configuration dictionary or GlassGenConfig object
         schema: Optional schema object to use for generating data
-        sink: Optional sink object to use for sending generated data
+        sink: Optional sink object or sink config dict to use for sending generated data
 
     Returns:
         If using a yield sink: A generator that yields events
@@ -46,9 +46,19 @@ def generate(
         schema = ConfigSchema.from_dict(config.schema_config)
         schema.validate()
 
-    # Create sink if not provided
+    sink_type_name = config.sink.type if config.sink else "custom"
     if sink is None:
+        if config.sink is None:
+            raise ConfigError("No sink provided", {"errors": ["Sink must be provided either in config or as parameter"]})
         sink = SinkFactory.create(config.sink.type, config.sink.params)
+    elif isinstance(sink, dict):
+        # Validate sink dict using SinkConfig validator
+        try:
+            sink_config = SinkConfig.model_validate(sink)
+            sink = SinkFactory.create(sink_config.type, sink_config.params)
+            sink_type_name = sink_config.type
+        except Exception as e:
+            raise ConfigError("Sink validation failed", {"errors": [str(e)]})
 
     # Create and run generator
     generator = Generator(config.generator, schema)
@@ -65,7 +75,7 @@ def generate(
                         yield event
             except StopIteration as e:
                 response = e.value
-                response["sink"] = config.sink.type
+                response["sink"] = sink_type_name
                 sink.close()
                 return response
 
@@ -79,6 +89,6 @@ def generate(
     except StopIteration as e:
         response = e.value
 
-    response["sink"] = config.sink.type
+    response["sink"] = sink_type_name
     sink.close()
     return response
