@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Union
 from typing import Generator as PyGenerator
-
+from pydantic import ValidationError
 from glassgen.config import ConfigError, GlassGenConfig, SinkConfig, validate_config
 from glassgen.generator import Generator
 from glassgen.schema import BaseSchema
@@ -46,7 +46,7 @@ def generate(
         schema = ConfigSchema.from_dict(config.schema_config)
         schema.validate()
 
-    sink_type_name = config.sink.type if config.sink else "custom"
+    sink_type_name = config.sink.type if config.sink else type(sink).__name__
     if sink is None:
         if config.sink is None:
             raise ConfigError("No sink provided", {"errors": ["Sink must be provided either in config or as parameter"]})
@@ -57,7 +57,7 @@ def generate(
             sink_config = SinkConfig.model_validate(sink)
             sink = SinkFactory.create(sink_config.type, sink_config.params)
             sink_type_name = sink_config.type
-        except Exception as e:
+        except (ValidationError, ConfigError) as e:
             raise ConfigError("Sink validation failed", {"errors": [str(e)]})
 
     # Create and run generator

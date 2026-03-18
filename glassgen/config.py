@@ -1,4 +1,4 @@
-from typing import Any, Dict, Literal, Optional
+from typing import Any, ClassVar, Dict, Literal, Optional
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
@@ -33,7 +33,7 @@ class SinkConfig(BaseModel):
     model_config = {"extra": "forbid"}
 
     # Required params for each sink type
-    _SINK_REQUIRED_PARAMS: Dict[str, list[str]] = {
+    _SINK_REQUIRED_PARAMS: ClassVar[Dict[str, list[str]]] = {
         "csv": ["path"],
         "kafka": ["bootstrap.servers", "topic"],
         "webhook": ["url"],
