@@ -85,7 +85,9 @@ def test_extra_fields():
     """Test validation of configuration with extra fields"""
     config_with_extra = {
         "schema": {"name": "$name"},
-        "sink": {"type": "csv", "params": {"path": "/tmp/test.csv"}, "extra_field": "value"},
+        "sink": {"type": "csv",
+                 "params": {"path": "/tmp/test.csv"},
+                 "extra_field": "value"},
         "generator": {"rps": 100, "num_records": 10},
     }
 

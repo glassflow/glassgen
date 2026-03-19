@@ -48,7 +48,7 @@ class SinkConfig(BaseModel):
         missing_params = [p for p in required_params if p not in params]
         if missing_params:
             raise ValueError(
-                f"Sink type '{self.type}' requires the following params: {missing_params}"
+                f"'{self.type}' sink requires the following params: {missing_params}"
             )
         return self
 
