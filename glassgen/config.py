@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
@@ -96,7 +96,7 @@ class GlassGenConfig(BaseModel):
 
     def _get_all_field_paths(
         self, schema: Dict[str, Any], prefix: str = ""
-    ) -> list[str]:
+    ) -> List[str]:
         """Get all possible field paths in the schema, including nested ones"""
         paths = []
         for key, value in schema.items():
