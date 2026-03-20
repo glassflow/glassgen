@@ -1,0 +1,6 @@
+export default {
+  index: { title: 'Introduction' },
+  'getting-started': { title: 'Getting Started' },
+  generators: { title: 'Generators' },
+  sinks: { title: 'Sinks' }
+}

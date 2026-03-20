@@ -1,0 +1,8 @@
+export default {
+  index: { title: 'Overview' },
+  csv: { title: 'CSV Sink' },
+  kafka: { title: 'Kafka Sink' },
+  webhook: { title: 'Webhook Sink' },
+  yield: { title: 'Yield Sink' },
+  custom: { title: 'Custom Sink' }
+}
