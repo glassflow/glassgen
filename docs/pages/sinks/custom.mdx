@@ -7,35 +7,30 @@ GlassGen allows you to create your own custom sinks by extending the `BaseSink` 
 
 ## Creating a Custom Sink
 
-To create a custom sink, you need to extend the `BaseSink` class and implement three methods:
+Extend `BaseSink` and implement three methods:
 
-1. `publish(self, data)`: Handle a single record
-2. `publish_bulk(self, data)`: Handle multiple records
-3. `close(self)`: Clean up resources when done
-
-Here's a basic example of a custom sink that prints data to the console:
+1. `publish(self, data: dict)`: Handle a single record. **Note:** the GlassGen engine never calls `publish()` directly — it is there for you to call manually if needed.
+2. `publish_bulk(self, data: list)`: Handle a batch of records. **This is the method the engine calls** during generation.
+3. `close(self)`: Clean up any resources when generation is complete.
 
 ```python
 from glassgen.sinks import BaseSink
 
 class PrintSink(BaseSink):
-    def __init__(self, config=None):
-        self.config = config
-    
     def publish(self, data):
         print(data)
-    
+
     def publish_bulk(self, data):
         for item in data:
             print(item)
-    
+
     def close(self):
         pass
 ```
 
 ## Using a Custom Sink
 
-You can use your custom sink by passing it directly to the `generate` function:
+Pass your sink instance to `generate()` via the `sink=` parameter. Custom sinks cannot be configured through the `"sink"` block in a config dict — that block only supports the built-in sink types.
 
 ```python
 import glassgen
@@ -44,17 +39,17 @@ from glassgen.sinks import BaseSink
 class PrintSink(BaseSink):
     def publish(self, data):
         print(data)
-    
+
     def publish_bulk(self, data):
         for item in data:
             print(item)
-    
+
     def close(self):
         pass
 
 config = {
     "schema": {
-        "name": "$name",        
+        "name": "$name",
         "email": "$email",
         "country": "$country",
         "id": "$uuid",
@@ -62,13 +57,13 @@ config = {
         "phone": "$phone_number",
         "job": "$job",
         "company": "$company"
-    },    
+    },
     "generator": {
         "rps": 10,
         "num_records": 100
     }
 }
 
-# Use the custom sink
+# Pass the sink instance directly — do not put it in the config dict
 glassgen.generate(config=config, sink=PrintSink())
 ```

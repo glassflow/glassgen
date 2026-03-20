@@ -51,10 +51,9 @@ Here's a simple example of using GlassGen to generate user data and save it to a
 ```python
 import glassgen
 
-# Define your configuration
 config = {
     "schema": {
-        "name": "$name",        
+        "name": "$name",
         "email": "$email",
         "country": "$country",
         "id": "$uuid",
@@ -70,19 +69,14 @@ config = {
         }
     },
     "generator": {
-        "rps": 1500,  # records per second
-        "num_records": 5000  # total number of records to generate
+        "rps": 1500,
+        "num_records": 5000
     }
 }
 
-# Start the generator
-glassgen.generate(config=config)
+result = glassgen.generate(config=config)
+# result is a dict: {"time_taken_ms": ..., "num_records": ..., "sink": "csv"}
 ```
-
-This will:
-1. Generate 5000 records of user data
-2. Create records at a rate of 1500 records per second
-3. Save the data to a file named `output.csv`
 
 ### Configuration File
 
@@ -92,37 +86,111 @@ You can also load the configuration from a JSON file:
 import glassgen
 import json
 
-# Load configuration from file
 with open("config.json") as f:
     config = json.load(f)
 
-# Start the generator
 glassgen.generate(config=config)
 ```
 
-The configuration file (`config.json`) should follow this structure:
+## CLI
+
+```bash
+glassgen generate-data --config config.json
+```
+
+## generate() Reference
+
+```python
+glassgen.generate(config, schema=None, sink=None)
+```
+
+- `config` (required): A configuration dict or `GlassGenConfig` object.
+- `schema` (optional): A custom `BaseSchema` instance. When provided, the `schema` block in `config` is ignored.
+- `sink` (optional): A `BaseSink` instance or a sink config dict. When provided, the `sink` block in `config` is ignored.
+
+**Return value:**
+- For all sinks except `yield`: returns a `dict` with `time_taken_ms`, `num_records`, and `sink`.
+- For the `yield` sink: returns a **generator** that yields one record at a time. See the [Yield Sink](./sinks/yield) page for details.
+
+## generate_one() Reference
+
+To generate a single record without any sink or generator config, use `generate_one()`:
+
+```python
+import glassgen
+
+record = glassgen.generate_one({
+    "id": "$uuid",
+    "name": "$name",
+    "email": "$email"
+})
+# {"id": "...", "name": "...", "email": "..."}
+```
+
+## Generator Configuration
+
+The `generator` block controls how records are produced:
 
 ```json
 {
-    "schema": {
-        "field1": "$generator_type",
-        "field2": "$generator_type(param1, param2)"
-    },
-    "sink": {
-        "type": "csv|kafka|webhook",
-        "params": {
-            // sink-specific parameters
-        }
-    },
-    "generator": {
-        "rps": 1000,  // records per second
-        "num_records": 5000  // total number of records to generate
-    }
+  "generator": {
+    "rps": 1000,
+    "num_records": 5000,
+    "bulk_size": 5000
+  }
 }
 ```
 
+| Field | Default | Description |
+|---|---|---|
+| `rps` | `0` | Target records per second. `0` means generate as fast as possible with no rate limiting. Values above 2500 also skip rate limiting. |
+| `num_records` | `100` | Total records to generate. Set to `-1` for infinite generation. |
+| `bulk_size` | `5000` | Internal batch size. Tune this to adjust memory usage vs. throughput. |
+
+### Infinite generation
+
+Set `num_records` to `-1` to generate records indefinitely (useful with the yield sink or streaming sinks):
+
+```python
+config = {
+    "schema": {"id": "$uuid", "value": "$int"},
+    "sink": {"type": "yield"},
+    "generator": {"rps": 100, "num_records": -1}
+}
+
+for record in glassgen.generate(config=config):
+    process(record)
+```
+
+## Event Duplication
+
+GlassGen can simulate real-world data streams that contain duplicate events. Configure it under `generator.event_options`:
+
+```json
+{
+  "generator": {
+    "rps": 1000,
+    "num_records": 10000,
+    "event_options": {
+      "duplication": {
+        "enabled": true,
+        "ratio": 0.1,
+        "key_field": "id",
+        "time_window": "1h"
+      }
+    }
+  }
+}
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `enabled` | yes | Turn duplication on or off. |
+| `ratio` | yes | Fraction of records that will be duplicates (0–1). `0.1` means ~10% duplicates. |
+| `key_field` | yes | The schema field used to identify a record for duplication. Must exist in the schema. |
+| `time_window` | no (default `1h`) | How far back to look when picking a record to duplicate. Supports `s`, `m`, `h`, `d` suffixes. |
+
 ## Next Steps
 
-- Learn about [available generators](/generators)
-- Explore [sink options](/sinks)
-- Check out [example configurations](/examples) 
+- Learn about [available generators](./generators)
+- Explore [sink options](./sinks)

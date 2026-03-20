@@ -14,7 +14,6 @@ The Webhook sink sends generated data to HTTP endpoints. It's useful for:
     "params": {
       "url": "https://api.example.com/webhook",
       "headers": {
-        "Content-Type": "application/json",
         "Authorization": "Bearer token"
       },
       "timeout": 30
@@ -26,8 +25,10 @@ The Webhook sink sends generated data to HTTP endpoints. It's useful for:
 ### Configuration Options
 
 - `url` (required): The HTTP endpoint URL
-- `headers` (optional): HTTP headers to include in the request
-- `timeout` (optional): Request timeout in seconds (default: 30)
+- `headers` (optional): Additional HTTP headers to include in the request
+- `timeout` (optional): Request timeout in seconds (default: `30`)
+
+The sink always sends requests with `Content-Type: application/json`. You do not need to include it in `headers`, and it cannot be removed.
 
 ## Examples
 
@@ -74,7 +75,8 @@ The Webhook sink sends generated data to HTTP endpoints. It's useful for:
 
 ## Request Format
 
-### Single Record
+Each record is sent as a JSON object in a single POST request:
+
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -86,15 +88,13 @@ The Webhook sink sends generated data to HTTP endpoints. It's useful for:
 
 ## Error Handling
 
-The Webhook sink includes built-in error handling:
-- Automatic retries on failed requests
-- Request timeout configuration
-- Detailed error logging
+If the endpoint returns a non-2xx status code, the sink raises an exception and generation stops. There are no automatic retries — each record is attempted once.
 
 ## Security
 
 For secure endpoints, you can configure:
 - HTTPS URLs
-- Authentication headers
+- Authentication headers (Bearer tokens, API keys, etc.)
 - Custom security headers
-- SSL certificate verification 
+
+SSL certificate verification uses the system default (enabled). It is not configurable via the sink.

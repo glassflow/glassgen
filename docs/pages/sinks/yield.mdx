@@ -1,36 +1,37 @@
 # Yield Sink
 
-The Yield sink is unique among GlassGen sinks as it doesn't send data to an external destination. Instead, it returns an iterator that you can use to process the generated data directly in your Python code.
+The Yield sink is unique among GlassGen sinks as it doesn't send data to an external destination. Instead, it returns a generator that you can iterate over to process records directly in your Python code.
 
 ## Key Features
 
-- Returns an iterator for direct data processing
+- Returns a generator for direct in-process data access
 - No external dependencies or configuration needed
-- Perfect for in-memory data processing
-- Useful for testing and development
-- Enables custom data processing pipelines
+- Perfect for in-memory data processing, testing, and custom pipelines
 
 ## Configuration
 
-The yield sink has the simplest configuration of all sinks:
-
 ```json
 {
-    "sink": {
-        "type": "yield"
-    }
+  "sink": {
+    "type": "yield"
+  }
 }
 ```
+
+No `params` are required or accepted.
 
 ## Usage Examples
 
 ### Basic Usage
+
+When the sink type is `yield`, `generate()` returns a generator instead of a response dict. Iterate over it to receive one record at a time:
+
 ```python
 import glassgen
 
 config = {
     "schema": {
-        "name": "$name",        
+        "name": "$name",
         "email": "$email",
         "age": "$intrange(18,65)"
     },
@@ -43,10 +44,40 @@ config = {
     }
 }
 
-# Get the iterator
 gen = glassgen.generate(config=config)
 
-# Process the data
 for item in gen:
     print(item)
+    # item is a dict, e.g. {"name": "Jane Doe", "email": "...", "age": 32}
+```
+
+### Accessing Response Metadata
+
+After the generator is exhausted, GlassGen produces a response dict with `time_taken_ms`, `num_records`, and `sink`. A `for` loop silently discards this value. To capture it, use `next()` directly:
+
+```python
+gen = glassgen.generate(config=config)
+
+try:
+    while True:
+        record = next(gen)
+        process(record)
+except StopIteration as e:
+    response = e.value
+    print(f"Generated {response['num_records']} records in {response['time_taken_ms']}ms")
+```
+
+### Infinite Generation
+
+Set `num_records` to `-1` to generate records indefinitely:
+
+```python
+config = {
+    "schema": {"id": "$uuid", "value": "$int"},
+    "sink": {"type": "yield"},
+    "generator": {"rps": 500, "num_records": -1}
+}
+
+for record in glassgen.generate(config=config):
+    process(record)  # runs forever until you break
 ```

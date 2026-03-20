@@ -11,257 +11,233 @@ GlassGen provides a variety of data generators to create synthetic data. Each ge
 
 ### String Generator
 ```json
-{
-    "field": "$string"
-}
+{ "field": "$string" }
 ```
-Generates a random string.
+Generates a random word.
 
 ### Integer Generator
 ```json
-{
-    "field": "$int"
-}
+{ "field": "$int" }
 ```
 Generates a random integer.
 
 ### Integer Range Generator
 ```json
-{
-    "field": "$intrange(1,100)"
-}
+{ "field": "$intrange(1,100)" }
 ```
-Generates a random integer within the specified range (inclusive).
+Generates a random integer within the specified range (inclusive). Only non-negative integers are supported as parameters.
+
+### Float Generator
+```json
+{ "field": "$float" }
+```
+Generates a random floating-point number with no fixed range (delegates to `faker.pyfloat` — values can be positive, negative, very large, or very small).
+
+### Price Generator
+```json
+{ "field": "$price" }
+```
+Generates a random price rounded to 2 decimal places. Defaults: `min=0.99`, `max=9999.99`. You can specify a custom range and decimal places:
+```json
+{ "field": "$price(1.2, 2.3, 3)" }
+```
+This generates a price between 1.2 and 2.3 with 3 decimal places.
+
+### Boolean Generator
+```json
+{ "field": "$boolean" }
+```
+Generates a random boolean value.
 
 ### Choice Generator
 ```json
-{
-    "field": "$choice(red,blue,green)"
-}
+{ "field": "$choice(red,blue,green)" }
 ```
 Randomly picks one value from the provided list.
 
 ### Datetime Generator
 ```json
-{
-    "field": "$datetime"
-}
+{ "field": "$datetime" }
 ```
-Generates current timestamp in ISO format by default (e.g., "2024-03-15T14:30:45.123456"). You can specify a custom format:
+Generates the current timestamp in ISO format (e.g., `"2024-03-15T14:30:45.123456"`). You can specify a custom format:
 ```json
-{
-    "field": "$datetime(\"%Y-%m-%d %H:%M:%S\")"
-}
+{ "field": "$datetime(\"%Y-%m-%d %H:%M:%S\")" }
 ```
 
 ### Timestamp Generator
 ```json
-{
-    "field": "$timestamp"
-}
+{ "field": "$timestamp" }
 ```
-Generates current Unix timestamp in seconds since epoch (e.g., 1710503445).
+Generates the current Unix timestamp in seconds (e.g., `1710503445`).
 
-### Boolean Generator
+### UUID Generator
 ```json
-{
-    "field": "$boolean"
-}
+{ "field": "$uuid" }
 ```
-Generates a random boolean value.
-
-### Float Generator
-```json
-{
-    "field": "$float"
-}
-```
-Generates a random floating point number.
-
-### Price Generator
-```json
-{
-    "field": "$price"
-}
-```
-Generates a random price value with 2 decimal places (e.g., 99.99). You can also specify custom range and decimal places:
-```json
-{
-    "field": "$price(1.2, 2.3, 3)"
-}
-```
-This generates a price between 1.2 and 2.3 with 3 decimal places.
+Generates a random UUID v4 string. `$uuid` and `$uuid4` are equivalent — both produce UUID v4 values.
 
 ### Greeting Generator
 ```json
-{
-    "field": "$greeting"
-}
+{ "field": "$greeting" }
 ```
-Generates a random greeting (e.g., "Hello", "Hi", "Hey", "Greetings", "Welcome").
+Generates a random greeting: `"Hello"`, `"Hi"`, `"Hey"`, `"Greetings"`, or `"Welcome"`.
 
-### UUID Generators
+### Prefixed ID Generator
+```json
+{ "field": "$prefixed_id(prod, 1, 9999)" }
+```
+Generates a string in the format `prefix_number` (e.g., `prod_42`). Parameters:
+- `prefix` (default: `item`): string prefix
+- `min` (default: `1`): minimum number
+- `max` (default: `1000`): maximum number
+
+```json
+{ "order_id": "$prefixed_id(order, 1000, 9999)" }
+```
+
+### Array Generator
+```json
+{ "field": "$array(email, 3)" }
+```
+Generates a list of values using any other generator. Parameters:
+- `generator_name`: the name of the generator to use for each element
+- `count`: number of elements in the array
+- additional parameters are forwarded to the underlying generator
+
+Examples:
 ```json
 {
-    "field": "$uuid"
+  "tags": "$array(choice(red,blue,green), 2)",
+  "scores": "$array(intrange(0,100), 5)",
+  "emails": "$array(email, 3)"
 }
 ```
-Generates a random UUID.
 
+### Query String Generator
 ```json
-{
-    "field": "$uuid4"
-}
+{ "field": "$query_string" }
 ```
-Generates a random UUID4.
+Generates a URL query string that mimics a Google Analytics 4 event, including fields like `cid`, `sid`, `en` (event name), `dt` (page title), `ul` (language), and `ur` (region). Useful for simulating web analytics data.
+
+---
 
 ## Personal Information
 
 ### Name Generator
 ```json
-{
-    "field": "$name"
-}
+{ "field": "$name" }
 ```
 Generates a random full name.
 
 ### Email Generators
 ```json
-{
-    "field": "$email"
-}
+{ "field": "$email" }
 ```
 Generates a random email address.
 
 ```json
-{
-    "field": "$company_email"
-}
+{ "field": "$company_email" }
 ```
-Generates a random company email.
+Generates a random company email address.
 
 ### Username Generator
 ```json
-{
-    "field": "$user_name"
-}
+{ "field": "$user_name" }
 ```
 Generates a random username.
 
 ### Password Generator
 ```json
-{
-    "field": "$password"
-}
+{ "field": "$password" }
 ```
 Generates a random password.
 
 ### Phone Number Generator
 ```json
-{
-    "field": "$phone_number"
-}
+{ "field": "$phone_number" }
 ```
 Generates a random phone number.
 
 ### SSN Generator
 ```json
-{
-    "field": "$ssn"
-}
+{ "field": "$ssn" }
 ```
 Generates a random Social Security Number.
+
+---
 
 ## Location
 
 ### Country Generator
 ```json
-{
-    "field": "$country"
-}
+{ "field": "$country" }
 ```
 Generates a random country name.
 
 ### City Generator
 ```json
-{
-    "field": "$city"
-}
+{ "field": "$city" }
 ```
 Generates a random city name.
 
 ### Address Generator
 ```json
-{
-    "field": "$address"
-}
+{ "field": "$address" }
 ```
 Generates a random street address.
 
 ### Zipcode Generator
 ```json
-{
-    "field": "$zipcode"
-}
+{ "field": "$zipcode" }
 ```
 Generates a random zip code.
+
+---
 
 ## Business
 
 ### Company Generator
 ```json
-{
-    "field": "$company"
-}
+{ "field": "$company" }
 ```
 Generates a random company name.
 
 ### Job Generator
 ```json
-{
-    "field": "$job"
-}
+{ "field": "$job" }
 ```
 Generates a random job title.
 
 ### URL Generator
 ```json
-{
-    "field": "$url"
-}
+{ "field": "$url" }
 ```
 Generates a random URL.
+
+---
 
 ## Other
 
 ### Text Generator
 ```json
-{
-    "field": "$text"
-}
+{ "field": "$text" }
 ```
 Generates a random text paragraph.
 
 ### IPv4 Generator
 ```json
-{
-    "field": "$ipv4"
-}
+{ "field": "$ipv4" }
 ```
 Generates a random IPv4 address.
 
 ### Currency Name Generator
 ```json
-{
-    "field": "$currency_name"
-}
+{ "field": "$currency_name" }
 ```
 Generates a random currency name.
 
 ### Color Name Generator
 ```json
-{
-    "field": "$color_name"
-}
+{ "field": "$color_name" }
 ```
-Generates a random color name. 
+Generates a random color name.
