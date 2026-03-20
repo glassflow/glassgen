@@ -51,8 +51,10 @@ def generate(
     sink_type_name = config.sink.type if config.sink else type(sink).__name__
     if sink is None:
         if config.sink is None:
-            raise ConfigError("No sink provided",
-          {"errors": ["Sink must be provided either in config or as parameter"]})
+            raise ConfigError(
+                "No sink provided",
+                {"errors": ["Sink must be provided either in config or as parameter"]},
+            )
         sink = SinkFactory.create(config.sink.type, config.sink.params)
     elif isinstance(sink, dict):
         # Validate sink dict using SinkConfig validator
@@ -62,7 +64,6 @@ def generate(
             sink_type_name = sink_config.type
         except (ValidationError, ConfigError) as e:
             raise ConfigError("Sink validation failed", {"errors": [str(e)]}) from e
-
 
     # Create and run generator
     generator = Generator(config.generator, schema)

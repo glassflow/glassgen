@@ -85,9 +85,11 @@ def test_extra_fields():
     """Test validation of configuration with extra fields"""
     config_with_extra = {
         "schema": {"name": "$name"},
-        "sink": {"type": "csv",
-                 "params": {"path": "/tmp/test.csv"},
-                 "extra_field": "value"},
+        "sink": {
+            "type": "csv",
+            "params": {"path": "/tmp/test.csv"},
+            "extra_field": "value",
+        },
         "generator": {"rps": 100, "num_records": 10},
     }
 
@@ -118,8 +120,10 @@ def test_invalid_sink_type():
     with pytest.raises(ConfigError) as exc_info:
         validate_config(invalid_config)
 
-    assert "csv" in str(exc_info.value.details["errors"][0]).lower() or \
-           "kafka" in str(exc_info.value.details["errors"][0]).lower()
+    assert (
+        "csv" in str(exc_info.value.details["errors"][0]).lower()
+        or "kafka" in str(exc_info.value.details["errors"][0]).lower()
+    )
 
 
 def test_missing_csv_sink_params():
@@ -166,11 +170,12 @@ def test_missing_webhook_sink_params():
 
 def test_yield_sink_no_params():
     """Test that yield sink works without params"""
-    config = validate_config({
-        "schema": {"name": "$name"},
-        "sink": {"type": "yield"},
-        "generator": {"num_records": 10},
-    })
+    config = validate_config(
+        {
+            "schema": {"name": "$name"},
+            "sink": {"type": "yield"},
+            "generator": {"num_records": 10},
+        }
+    )
     assert config.sink.type == "yield"
     assert config.sink.params is None
-
