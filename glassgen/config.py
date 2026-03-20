@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
@@ -28,9 +28,29 @@ def validate_config(config_data: Dict[str, Any]):
 
 
 class SinkConfig(BaseModel):
-    type: str
+    type: Literal["csv", "kafka", "webhook", "yield"]
     params: Optional[Dict[str, Any]] = None
     model_config = {"extra": "forbid"}
+
+    # Required params for each sink type
+    _SINK_REQUIRED_PARAMS: ClassVar[Dict[str, list[str]]] = {
+        "csv": ["path"],
+        "kafka": ["bootstrap.servers", "topic"],
+        "webhook": ["url"],
+        "yield": [],
+    }
+
+    @model_validator(mode="after")
+    def validate_sink_params(self) -> "SinkConfig":
+        required_params = self._SINK_REQUIRED_PARAMS.get(self.type, [])
+        params = self.params or {}
+
+        missing_params = [p for p in required_params if p not in params]
+        if missing_params:
+            raise ValueError(
+                f"'{self.type}' sink requires the following params: {missing_params}"
+            )
+        return self
 
 
 class DuplicationConfig(BaseModel):

@@ -1,5 +1,6 @@
 from glassgen import generate
 from glassgen.config import GlassGenConfig
+from glassgen.sinks import CSVSink
 
 
 def test_generate_with_dict_config(basic_config, mock_sink):
@@ -65,3 +66,36 @@ def test_predefined_schema_with_deduplication(predefined_schema_dedup_config):
 
     # Verify we have duplicates
     assert len(unique_emails) < len(events)
+
+
+def test_generate_with_sink_instance(basic_config, temp_csv_file):
+    """Test generating data with a CSVSink instance"""
+    # Remove sink from config to pass it separately
+    config_without_sink = {
+        "schema": basic_config["schema"],
+        "generator": basic_config["generator"],
+    }
+
+    # Pass an instance
+    csv_sink = CSVSink({"path": temp_csv_file})
+
+    result = generate(config_without_sink, sink=csv_sink)
+    assert isinstance(result, dict)
+    assert result["sink"] == "CSVSink"
+    assert csv_sink.file is None or csv_sink.file.closed
+
+
+def test_generate_with_dict_csv_sink(basic_config, temp_csv_file):
+    """Test generating data with a dict containing csv sink configuration"""
+    # Remove sink from config to pass it separately as a dict
+    config_without_sink = {
+        "schema": basic_config["schema"],
+        "generator": basic_config["generator"],
+    }
+
+    # Pass sink as a dict
+    sink_dict = {"type": "csv", "params": {"path": temp_csv_file}}
+
+    result = generate(config_without_sink, sink=sink_dict)
+    assert isinstance(result, dict)
+    assert result["sink"] == "csv"

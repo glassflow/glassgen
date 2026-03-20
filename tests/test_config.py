@@ -21,7 +21,7 @@ def test_invalid_rps():
     """Test validation of invalid RPS value"""
     invalid_config = {
         "schema": {"name": "$name"},
-        "sink": {"type": "csv"},
+        "sink": {"type": "csv", "params": {"path": "/tmp/test.csv"}},
         "generator": {"rps": -1, "num_records": 10},
     }
 
@@ -35,7 +35,7 @@ def test_invalid_duplication_ratio():
     """Test validation of invalid duplication ratio"""
     invalid_config = {
         "schema": {"name": "$name", "email": "$email"},
-        "sink": {"type": "csv"},
+        "sink": {"type": "csv", "params": {"path": "/tmp/test.csv"}},
         "generator": {
             "rps": 100,
             "num_records": 10,
@@ -60,7 +60,7 @@ def test_missing_key_field():
     """Test validation when key_field is not in schema"""
     invalid_config = {
         "schema": {"name": "$name"},  # Missing email field
-        "sink": {"type": "csv"},
+        "sink": {"type": "csv", "params": {"path": "/tmp/test.csv"}},
         "generator": {
             "rps": 100,
             "num_records": 10,
@@ -85,7 +85,9 @@ def test_extra_fields():
     """Test validation of configuration with extra fields"""
     config_with_extra = {
         "schema": {"name": "$name"},
-        "sink": {"type": "csv", "extra_field": "value"},
+        "sink": {"type": "csv",
+                 "params": {"path": "/tmp/test.csv"},
+                 "extra_field": "value"},
         "generator": {"rps": 100, "num_records": 10},
     }
 
@@ -103,3 +105,72 @@ def test_valid_duplication_config(duplication_config):
     assert config.generator.event_options.duplication.ratio == 0.2
     assert config.generator.event_options.duplication.key_field == "email"
     assert config.generator.event_options.duplication.time_window == "1h"
+
+
+def test_invalid_sink_type():
+    """Test validation of invalid sink type"""
+    invalid_config = {
+        "schema": {"name": "$name"},
+        "sink": {"type": "unknown_sink"},
+        "generator": {"num_records": 10},
+    }
+
+    with pytest.raises(ConfigError) as exc_info:
+        validate_config(invalid_config)
+
+    assert "csv" in str(exc_info.value.details["errors"][0]).lower() or \
+           "kafka" in str(exc_info.value.details["errors"][0]).lower()
+
+
+def test_missing_csv_sink_params():
+    """Test validation when csv sink is missing required path param"""
+    invalid_config = {
+        "schema": {"name": "$name"},
+        "sink": {"type": "csv"},
+        "generator": {"num_records": 10},
+    }
+
+    with pytest.raises(ConfigError) as exc_info:
+        validate_config(invalid_config)
+
+    assert "path" in str(exc_info.value.details["errors"][0]).lower()
+
+
+def test_missing_kafka_sink_params():
+    """Test validation when kafka sink is missing required params"""
+    invalid_config = {
+        "schema": {"name": "$name"},
+        "sink": {"type": "kafka", "params": {"topic": "test"}},
+        "generator": {"num_records": 10},
+    }
+
+    with pytest.raises(ConfigError) as exc_info:
+        validate_config(invalid_config)
+
+    assert "bootstrap.servers" in str(exc_info.value.details["errors"][0])
+
+
+def test_missing_webhook_sink_params():
+    """Test validation when webhook sink is missing required url param"""
+    invalid_config = {
+        "schema": {"name": "$name"},
+        "sink": {"type": "webhook"},
+        "generator": {"num_records": 10},
+    }
+
+    with pytest.raises(ConfigError) as exc_info:
+        validate_config(invalid_config)
+
+    assert "url" in str(exc_info.value.details["errors"][0]).lower()
+
+
+def test_yield_sink_no_params():
+    """Test that yield sink works without params"""
+    config = validate_config({
+        "schema": {"name": "$name"},
+        "sink": {"type": "yield"},
+        "generator": {"num_records": 10},
+    })
+    assert config.sink.type == "yield"
+    assert config.sink.params is None
+
