@@ -227,9 +227,9 @@ class GeneratorRegistry:
             GeneratorType.UUID: lambda: str(self._faker.uuid4()),
             GeneratorType.NAME: self._faker.name,
             GeneratorType.TEXT: self._faker.text,
-            GeneratorType.ADDRESS: lambda: self._faker.address()
-            .replace("\n", " ")
-            .strip(),
+            GeneratorType.ADDRESS: lambda: (
+                self._faker.address().replace("\n", " ").strip()
+            ),
             GeneratorType.PHONE_NUMBER: self._faker.phone_number,
             GeneratorType.JOB: self._faker.job,
             GeneratorType.COMPANY: self._faker.company,

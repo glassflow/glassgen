@@ -16,11 +16,6 @@ export default {
   footer: {
     text: `GlassGen ${new Date().getFullYear()} © GlassFlow.`
   },
-  useNextSeoProps() {
-    return {
-      titleTemplate: '%s – GlassGen'
-    }
-  },
   head: (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,5 +25,6 @@ export default {
     </>
   ),
   primaryHue: 210,
-  primarySaturation: 100
+  primarySaturation: 100,
+  titleSuffix: ' – GlassGen'
 } 
