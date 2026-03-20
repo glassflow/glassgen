@@ -33,7 +33,7 @@ class SinkConfig(BaseModel):
     model_config = {"extra": "forbid"}
 
     # Required params for each sink type
-    _SINK_REQUIRED_PARAMS: ClassVar[Dict[str, list[str]]] = {
+    _SINK_REQUIRED_PARAMS: ClassVar[Dict[str, List[str]]] = {
         "csv": ["path"],
         "kafka": ["bootstrap.servers", "topic"],
         "webhook": ["url"],
