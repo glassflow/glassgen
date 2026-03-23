@@ -20,7 +20,6 @@ class Generator:
         self.duplicate_controller = (
             DuplicateController(self.generator_config)
             if self.generator_config.event_options.duplication
-            and self.generator_config.event_options.duplication.enabled
             else None
         )
 
