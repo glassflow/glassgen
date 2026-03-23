@@ -194,8 +194,9 @@ def test_array_generator():
     # Test with generator that has parameters
     schema_with_params = ConfigSchema.from_dict(
         {
-            "numbers": "$array(intrange, 5, 1, 100)",
-            "choices": "$array(choice, 3, apple, banana, cherry)",
+            "numbers": "$array(intrange(1, 100), 5)",
+            "choices": "$array(choice(apple, banana, cherry), 3)",
+            "prices": "$array(price(1.0, 10.0), 4)",
         }
     )
     record_with_params = schema_with_params._generate_record()
@@ -214,6 +215,14 @@ def test_array_generator():
     assert len(record_with_params["choices"]) == 3
     for choice in record_with_params["choices"]:
         assert choice in ["apple", "banana", "cherry"]
+
+    # Check prices array
+    assert "prices" in record_with_params
+    assert isinstance(record_with_params["prices"], list)
+    assert len(record_with_params["prices"]) == 4
+    for price in record_with_params["prices"]:
+        assert isinstance(price, float)
+        assert 1.0 <= price <= 10.0
 
 
 def test_array_generator_registry():
