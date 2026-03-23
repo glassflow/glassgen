@@ -185,7 +185,7 @@ GlassGen can simulate real-world data streams that contain duplicate events. Con
 
 | Field | Required | Description |
 |---|---|---|
-| `enabled` | yes | Turn duplication on or off. |
+| `enabled` | yes | Turn duplication on or off. `true` means on and `false` means off |
 | `ratio` | yes | Fraction of records that will be duplicates (0–1). `0.1` means ~10% duplicates. |
 | `key_field` | yes | The schema field used to identify a record for duplication. Must exist in the schema. |
 | `time_window` | no (default `1h`) | How far back to look when picking a record to duplicate. Supports `s`, `m`, `h`, `d` suffixes. |

@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
+from glassgen.config import GeneratorConfig
 from glassgen.generator.batch_controller import DynamicBatchController
 from glassgen.generator.duplication import DuplicateController
+from glassgen.generator.generator import Generator
+from glassgen.schema.base import BaseSchema
 
 
 class TestDynamicBatchController:
@@ -162,3 +165,76 @@ class TestDuplicateController:
         assert duplicate["data"]["score"] == 100
         assert duplicate["id"] == "123"
         assert duplicate["email"] == "john@example.com"
+
+
+class TestGenerator:
+    def test_generate_simple(self):
+        """Test the generate_simple method of Generator with duplication disabled."""
+        mock_duplication = MagicMock()
+        mock_duplication.enabled = False
+        mock_duplication.ratio = 0.4
+        mock_duplication.key_field = "id"
+        mock_duplication.time_window = "7s"
+
+        mock_event_options = MagicMock()
+        mock_event_options.duplication = mock_duplication
+
+        mock_config = MagicMock(spec=GeneratorConfig)
+        mock_config.rps = 3000
+        mock_config.bulk_size = 10
+        mock_config.num_records = 30
+        mock_config.event_options = mock_event_options
+
+        mock_schema = MagicMock(spec=BaseSchema)
+        mock_schema._generate_record.return_value = {"id": "simple"}
+
+        generator = Generator(mock_config, mock_schema)
+
+        # Assert that duplicate_controller is None when duplication is disabled
+        assert generator.duplicate_controller is None
+
+        result = list(generator.generate_simple())
+
+        # Verify the number of records generated
+        assert len(result) == 3  # 30 records in batches of 10
+        for batch in result:
+            assert len(batch) == 10
+            for record in batch:
+                assert record == {"id": "simple"}
+
+    def test_generate_optimized(self):
+        """Test the generate_optimized method of Generator with duplication enabled."""
+        mock_duplication = MagicMock()
+        mock_duplication.enabled = True
+        mock_duplication.ratio = 0.4
+        mock_duplication.key_field = "id"
+        mock_duplication.time_window = "7s"
+
+        mock_event_options = MagicMock()
+        mock_event_options.duplication = mock_duplication
+
+        mock_config = MagicMock(spec=GeneratorConfig)
+        mock_config.rps = 3000
+        mock_config.bulk_size = 10
+        mock_config.num_records = 30
+        mock_config.event_options = mock_event_options
+
+        mock_schema = MagicMock(spec=BaseSchema)
+        mock_schema._generate_record.return_value = {"id": "simple"}
+
+        generator = Generator(mock_config, mock_schema)
+
+        # Assert that duplicate_controller is not None when duplication is enabled
+        assert generator.duplicate_controller is not None
+
+        result = list(generator.generate_simple())
+
+        # Verify the number of records generated
+        assert len(result) == 3  # 30 records in batches of 10
+        for batch in result:
+            assert len(batch) == 10
+            for record in batch:
+                assert record == {"id": "simple"}
+
+
+
