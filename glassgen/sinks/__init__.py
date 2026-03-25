@@ -1,4 +1,5 @@
 from glassgen.sinks.base import BaseSink
+from glassgen.sinks.bigquery_sink import BigQuerySink
 from glassgen.sinks.csv_sink import CSVSink
 from glassgen.sinks.kafka_sink import KafkaSink
 from glassgen.sinks.webhook_sink import WebHookSink
@@ -11,6 +12,7 @@ __all__ = [
     "KafkaSink",
     "WebHookSink",
     "YieldSink",
+    "BigQuerySink",
 ]
 
 
@@ -20,6 +22,7 @@ class SinkFactory:
         "webhook": WebHookSink,
         "yield": YieldSink,
         "kafka": KafkaSink,
+        "bigquery": BigQuerySink,
     }
 
     @classmethod
