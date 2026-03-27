@@ -253,6 +253,53 @@ def test_array_generator_registry():
         assert 10 <= num <= 20
 
 
+def test_array_generator_both_formats():
+    """Test that both array formats work:
+    1. Nested params format: "$array(intrange(1, 100), 5)"
+    2. Flat params format: "$array(intrange, 5, 1, 100)"
+    """
+    # Test nested params format
+    schema_nested = ConfigSchema.from_dict(
+        {"numbers_nested": "$array(intrange(1, 100), 5)"}
+    )
+    record_nested = schema_nested._generate_record()
+
+    assert "numbers_nested" in record_nested
+    assert isinstance(record_nested["numbers_nested"], list)
+    assert len(record_nested["numbers_nested"]) == 5
+    for num in record_nested["numbers_nested"]:
+        assert isinstance(num, int)
+        assert 1 <= num <= 100
+
+    # Test flat params format
+    schema_flat = ConfigSchema.from_dict(
+        {"numbers_flat": "$array(choice, 3, apple, banana, cherry)"}
+    )
+    record_flat = schema_flat._generate_record()
+
+    assert "numbers_flat" in record_flat
+    assert isinstance(record_flat["numbers_flat"], list)
+    assert len(record_flat["numbers_flat"]) == 3
+    for num in record_flat["numbers_flat"]:
+        assert isinstance(num, str)
+
+    # Test both formats in the same schema
+    schema_both = ConfigSchema.from_dict(
+        {
+            "nested_format": "$array(price(1.0, 5.0), 3)",
+            "flat_format": "$array(price, 3, 1.0, 5.0)",
+        }
+    )
+    record_both = schema_both._generate_record()
+
+    assert len(record_both["nested_format"]) == 3
+    assert len(record_both["flat_format"]) == 3
+
+    for num in record_both["nested_format"]:
+        assert 1.0 <= num <= 5.0
+    for price in record_both["flat_format"]:
+        assert 1.0 <= price <= 5.0
+
 def test_predefined_schema():
     """Test using predefined UserSchema"""
     schema = UserSchema()

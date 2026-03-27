@@ -83,14 +83,18 @@ class ConfigSchema(BaseSchema, BaseModel):
 
                         # Get nested params from either format
                         nested_params = []
-                        if array_match.group(2):
-                            # Format: generator_name(params), count
+                        nested_params_str = array_match.group(2) or array_match.group(4)
+                        if nested_params_str:
+                            # Format 1: generator_name(params), count
+                            # e.g., "$array(intrange(1, 100), 5)"
+                            # Format 2: generator_name, count, param1, param2, ...
+                            # e.g., "$array(intrange, 5, 1, 100)"
                             nested_schema = ConfigSchema._schema_dict_to_fields(
                                 {
                                     name: "$"
                                     + generator_name_param
                                     + "("
-                                    + array_match.group(2)
+                                    + nested_params_str
                                     + ")"
                                 }
                             )
