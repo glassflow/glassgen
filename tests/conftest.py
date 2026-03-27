@@ -72,6 +72,13 @@ def temp_csv_file():
 
 
 @pytest.fixture
+def temp_ndjson_file():
+    """Create a temporary NDJSON file for testing"""
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".ndjson") as f:
+        return f.name
+
+
+@pytest.fixture
 def mock_webhook():
     """Fixture for mocking webhook requests"""
     with patch("requests.post") as mock_post:
