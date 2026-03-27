@@ -92,7 +92,10 @@ def test_ndjson_sink_publish(temp_ndjson_file):
 def test_ndjson_sink_bulk_publish(temp_ndjson_file):
     """Test the NDJSON sink bulk publish method"""
     sink = NDJSONSink({"path": temp_ndjson_file})
-    data = [{"name": "Alice", "age": 25}, {"name": "Bob", "age": 35, "nested": {"x": 1}}]
+    data = [
+        {"name": "Alice", "age": 25},
+        {"name": "Bob", "age": 35, "nested": {"x": 1}},
+    ]
     sink.publish_bulk(data)
     sink.close()
 
