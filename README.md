@@ -102,6 +102,7 @@ glassgen.generate(config=config)
 GlassGen supports multiple sink types for different output destinations:
 
 - [CSV Sink](#csv-sink) - Write data to CSV files
+- [NDJSON Sink](#ndjson-sink) - Write data to NDJSON files
 - [Kafka Sink](#kafka-sink) - Send data to Kafka topics (supports both Confluent Cloud and Aiven)
 - [Webhook Sink](#webhook-sink) - Send data to HTTP endpoints
 - [Yield Sink](#yield-sink) - Get data as an iterator in Python
@@ -114,6 +115,18 @@ GlassGen supports multiple sink types for different output destinations:
         "type": "csv",
         "params": {
             "path": "output.csv"
+        }
+    }
+}
+```
+
+### NDJSON Sink
+```json
+{
+    "sink": {
+        "type": "ndjson",
+        "params": {
+            "path": "output.ndjson"
         }
     }
 }
