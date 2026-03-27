@@ -5,3 +5,4 @@ pyyaml>=6.0.0
 confluent-kafka==2.8.2
 aws-msk-iam-sasl-signer-python==1.0.2
 requests>=2.25.0
+google-cloud-bigquery>=3.0.0

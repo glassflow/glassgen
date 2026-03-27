@@ -107,6 +107,16 @@ def kafka_sink_config():
 
 
 @pytest.fixture
+def bigquery_sink_config():
+    """Fixture for BigQuery sink configuration"""
+    return {
+        "project_id": "test-project",
+        "dataset": "test_dataset",
+        "table": "test_table",
+        "credentials_path": "path/to/credentials.json",
+    }
+
+@pytest.fixture
 def generator_config():
     """Fixture for generator configuration with duplication enabled"""
     return GeneratorConfig(
