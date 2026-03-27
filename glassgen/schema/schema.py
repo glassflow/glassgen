@@ -57,35 +57,48 @@ class ConfigSchema(BaseSchema, BaseModel):
                     # Handle choice generator specially
                     if generator_name == GeneratorType.CHOICE:
                         # Split by comma but preserve quoted strings
-                        params = [p.strip().strip("\"'") for p in params_str.split(",")]
+                        params = [
+                            p.strip().strip("\"'") for p in params_str.split(",")
+                        ]
                     elif generator_name == GeneratorType.ARRAY:
-                        # Handle array generator: format is "generator_name, count,
-                        # param1, param2, ..."
-                        param_parts = [p.strip() for p in params_str.split(",")]
-                        if len(param_parts) < 2:
+                        # Handle array: "generator_name(params), count" or
+                        # "generator_name, count, param1, param2, ..."
+                        array_match = re.match(
+                            r"(\w+)(?:\((.*?)\))?,\s*(\d+)(?:,\s*(.*))?", params_str
+                        )
+                        if not array_match:
                             raise ValueError(
-                                f"Array generator requires at least generator name and \
-                                    count: {value}"
+                                f"Invalid array format: {params_str}"
                             )
 
-                        # First parameter is the generator name (without $)
-                        generator_name_param = param_parts[0].strip("$")
-                        # Second parameter is the count
+                        generator_name_param = array_match.group(1)
+
                         try:
-                            count = int(param_parts[1])
+                            count = int(array_match.group(3))
                         except ValueError as e:
                             raise ValueError(
-                                f"Array count must be an integer: {param_parts[1]}"
+                                f"Array count must be an integer: "
+                                f"{array_match.group(3)}"
                             ) from e
 
-                        # Remaining parameters are for the nested generator
+                        # Get nested params from either format
                         nested_params = []
-                        for p in param_parts[2:]:
-                            # Convert numeric parameters
-                            if p.isdigit():
-                                nested_params.append(int(p))
-                            else:
-                                nested_params.append(p)
+                        nested_params_str = array_match.group(2) or array_match.group(4)
+                        if nested_params_str:
+                            # Format 1: generator_name(params), count
+                            # e.g., "$array(intrange(1, 100), 5)"
+                            # Format 2: generator_name, count, param1, param2, ...
+                            # e.g., "$array(intrange, 5, 1, 100)"
+                            nested_schema = ConfigSchema._schema_dict_to_fields(
+                                {
+                                    name: "$"
+                                    + generator_name_param
+                                    + "("
+                                    + nested_params_str
+                                    + ")"
+                                }
+                            )
+                            nested_params = nested_schema[name].params
 
                         params = [generator_name_param, count] + nested_params
                     else:
