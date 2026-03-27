@@ -1,8 +1,6 @@
 import nextra from 'nextra'
 
 const withNextra = nextra({
-  theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.jsx',
   defaultShowCopyCode: true,
   latex: true,
 })
@@ -13,6 +11,11 @@ export default withNextra({
     unoptimized: true
   },
   basePath: '',
+  turbopack: {
+    resolveAlias: {
+      'next-mdx-import-source-file': './mdx-components.jsx'
+    }
+  },
   async redirects() {
     return [
       {
