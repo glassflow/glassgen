@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytest
@@ -7,6 +8,7 @@ from glassgen.schema import ConfigSchema
 from glassgen.sinks import (
     BaseSink,
     CSVSink,
+    NDJSONSink,
     SinkFactory,
     WebHookSink,
     YieldSink,
@@ -71,11 +73,66 @@ def test_csv_sink_bulk_publish(temp_csv_file):
     os.unlink(temp_csv_file)
 
 
+def test_ndjson_sink_publish(temp_ndjson_file):
+    """Test the NDJSON sink publish method"""
+    sink = NDJSONSink({"path": temp_ndjson_file})
+    data = {"name": "John", "age": 30}
+    sink.publish(data)
+    sink.close()
+
+    assert os.path.exists(temp_ndjson_file)
+    with open(temp_ndjson_file, "r") as f:
+        lines = f.readlines()
+    assert len(lines) == 1
+    assert json.loads(lines[0]) == data
+
+    os.unlink(temp_ndjson_file)
+
+
+def test_ndjson_sink_bulk_publish(temp_ndjson_file):
+    """Test the NDJSON sink bulk publish method"""
+    sink = NDJSONSink({"path": temp_ndjson_file})
+    data = [
+        {"name": "Alice", "age": 25},
+        {"name": "Bob", "age": 35, "nested": {"x": 1}},
+    ]
+    sink.publish_bulk(data)
+    sink.close()
+
+    assert os.path.exists(temp_ndjson_file)
+    with open(temp_ndjson_file, "r") as f:
+        lines = f.readlines()
+    assert len(lines) == 2
+    assert json.loads(lines[0]) == data[0]
+    assert json.loads(lines[1]) == data[1]
+
+    os.unlink(temp_ndjson_file)
+
+
+def test_ndjson_sink_preserves_nested_structure(temp_ndjson_file):
+    """Test that NDJSON sink preserves nested objects (no flattening)"""
+    sink = NDJSONSink({"path": temp_ndjson_file})
+    data = {"user": {"id": "abc", "score": 99}, "tags": ["a", "b"]}
+    sink.publish(data)
+    sink.close()
+
+    with open(temp_ndjson_file, "r") as f:
+        record = json.loads(f.readline())
+    assert record["user"]["id"] == "abc"
+    assert record["tags"] == ["a", "b"]
+
+    os.unlink(temp_ndjson_file)
+
+
 def test_sink_factory():
     """Test the sink factory"""
     # Test CSV sink creation
     csv_sink = SinkFactory.create("csv", {"path": "test.csv"})
     assert isinstance(csv_sink, CSVSink)
+
+    # Test NDJSON sink creation
+    ndjson_sink = SinkFactory.create("ndjson", {"path": "test.ndjson"})
+    assert isinstance(ndjson_sink, NDJSONSink)
 
     # Test yield sink creation
     yield_sink = SinkFactory.create("yield", {})

@@ -168,19 +168,19 @@ class TestDuplicateController:
 
 
 class TestGenerator:
-    def test_generate_simple(self):
-        """Test the generate_simple method of Generator with duplication disabled."""
+    def test_duplicate_controller_is_none_when_duplication_disabled(self):
+        """
+        duplicate_controller must be None when
+        duplication.enabled is False (regression for the bug fix).
+        """
         mock_duplication = MagicMock()
         mock_duplication.enabled = False
-        mock_duplication.ratio = 0.4
-        mock_duplication.key_field = "id"
-        mock_duplication.time_window = "7s"
 
         mock_event_options = MagicMock()
         mock_event_options.duplication = mock_duplication
 
         mock_config = MagicMock(spec=GeneratorConfig)
-        mock_config.rps = 3000
+        mock_config.rps = 0
         mock_config.bulk_size = 10
         mock_config.num_records = 30
         mock_config.event_options = mock_event_options
@@ -190,20 +190,17 @@ class TestGenerator:
 
         generator = Generator(mock_config, mock_schema)
 
-        # Assert that duplicate_controller is None when duplication is disabled
         assert generator.duplicate_controller is None
 
         result = list(generator.generate_simple())
-
-        # Verify the number of records generated
-        assert len(result) == 3  # 30 records in batches of 10
+        assert len(result) == 3
         for batch in result:
             assert len(batch) == 10
             for record in batch:
                 assert record == {"id": "simple"}
 
-    def test_generate_optimized(self):
-        """Test the generate_optimized method of Generator with duplication enabled."""
+    def test_duplicate_controller_initialized_when_duplication_enabled(self):
+        """duplicate_controller must be set when duplication.enabled is True."""
         mock_duplication = MagicMock()
         mock_duplication.enabled = True
         mock_duplication.ratio = 0.4
@@ -214,7 +211,7 @@ class TestGenerator:
         mock_event_options.duplication = mock_duplication
 
         mock_config = MagicMock(spec=GeneratorConfig)
-        mock_config.rps = 3000
+        mock_config.rps = 0
         mock_config.bulk_size = 10
         mock_config.num_records = 30
         mock_config.event_options = mock_event_options
@@ -224,17 +221,9 @@ class TestGenerator:
 
         generator = Generator(mock_config, mock_schema)
 
-        # Assert that duplicate_controller is not None when duplication is enabled
         assert generator.duplicate_controller is not None
 
-        result = list(generator.generate_simple())
-
-        # Verify the number of records generated
-        assert len(result) == 3  # 30 records in batches of 10
+        result = list(generator.generate_optimized())
+        assert len(result) == 3
         for batch in result:
             assert len(batch) == 10
-            for record in batch:
-                assert record == {"id": "simple"}
-
-
-
