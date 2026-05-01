@@ -48,6 +48,7 @@ class GeneratorType(str, Enum):
     MONTH = "month"
     YEAR = "year"
 
+
 def choice_generator(choices: List[str]) -> str:
     """Generate a random choice from a list of strings"""
     return random.choice(choices)

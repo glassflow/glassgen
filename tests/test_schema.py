@@ -540,12 +540,9 @@ def test_year_generator():
 
 def test_date_components_schema():
     """Test using DAY, MONTH, and YEAR together in a schema"""
-    schema = ConfigSchema.from_dict({
-        "day": "$day_of_month",
-        "month": "$month",
-        "year": "$year",
-        "name": "$name"
-    })
+    schema = ConfigSchema.from_dict(
+        {"day": "$day_of_month", "month": "$month", "year": "$year", "name": "$name"}
+    )
 
     record = schema._generate_record()
 
@@ -568,16 +565,14 @@ def test_date_components_schema():
 
 def test_date_components_in_nested_schema():
     """Test DAY, MONTH, and YEAR in a nested schema"""
-    schema = ConfigSchema.from_dict({
-        "event": {
-            "date": {
-                "day": "$day_of_month",
-                "month": "$month",
-                "year": "$year"
-            },
-            "name": "$name"
+    schema = ConfigSchema.from_dict(
+        {
+            "event": {
+                "date": {"day": "$day_of_month", "month": "$month", "year": "$year"},
+                "name": "$name",
+            }
         }
-    })
+    )
 
     record = schema._generate_record()
 
@@ -592,4 +587,3 @@ def test_date_components_in_nested_schema():
     assert 1 <= int(record["event"]["date"]["day"]) <= 31
     assert 1 <= int(record["event"]["date"]["month"]) <= 12
     assert 1970 <= int(record["event"]["date"]["year"]) <= 2100
-
