@@ -300,6 +300,7 @@ def test_array_generator_both_formats():
     for price in record_both["flat_format"]:
         assert 1.0 <= price <= 5.0
 
+
 def test_predefined_schema():
     """Test using predefined UserSchema"""
     schema = UserSchema()

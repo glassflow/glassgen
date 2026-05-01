@@ -57,9 +57,7 @@ class ConfigSchema(BaseSchema, BaseModel):
                     # Handle choice generator specially
                     if generator_name == GeneratorType.CHOICE:
                         # Split by comma but preserve quoted strings
-                        params = [
-                            p.strip().strip("\"'") for p in params_str.split(",")
-                        ]
+                        params = [p.strip().strip("\"'") for p in params_str.split(",")]
                     elif generator_name == GeneratorType.ARRAY:
                         # Handle array: "generator_name(params), count" or
                         # "generator_name, count, param1, param2, ..."
@@ -67,9 +65,7 @@ class ConfigSchema(BaseSchema, BaseModel):
                             r"(\w+)(?:\((.*?)\))?,\s*(\d+)(?:,\s*(.*))?", params_str
                         )
                         if not array_match:
-                            raise ValueError(
-                                f"Invalid array format: {params_str}"
-                            )
+                            raise ValueError(f"Invalid array format: {params_str}")
 
                         generator_name_param = array_match.group(1)
 
