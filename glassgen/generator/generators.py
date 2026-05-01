@@ -44,7 +44,7 @@ class GeneratorType(str, Enum):
     PREFIXED_ID = "prefixed_id"
     ARRAY = "array"
     QUERY_STRING = "query_string"
-    DAY = "day"
+    DAY = "day_of_month"
     MONTH = "month"
     YEAR = "year"
 

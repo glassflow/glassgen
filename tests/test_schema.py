@@ -496,7 +496,7 @@ def test_invalid_schema_value_type():
 
 def test_day_generator():
     """Test DAY generator using Faker"""
-    schema = ConfigSchema.from_dict({"day": "$day"})
+    schema = ConfigSchema.from_dict({"day": "$day_of_month"})
 
     # Generate multiple records to test range
     for _ in range(50):
@@ -541,7 +541,7 @@ def test_year_generator():
 def test_date_components_schema():
     """Test using DAY, MONTH, and YEAR together in a schema"""
     schema = ConfigSchema.from_dict({
-        "day": "$day",
+        "day": "$day_of_month",
         "month": "$month",
         "year": "$year",
         "name": "$name"
@@ -571,7 +571,7 @@ def test_date_components_in_nested_schema():
     schema = ConfigSchema.from_dict({
         "event": {
             "date": {
-                "day": "$day",
+                "day": "$day_of_month",
                 "month": "$month",
                 "year": "$year"
             },
