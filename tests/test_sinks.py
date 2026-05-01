@@ -198,9 +198,7 @@ def test_bigquery_sink(mocker):
     mock_client_instance.get_table.return_value = mocker.MagicMock()
     mock_client_instance.insert_rows_json.return_value = []
 
-    mock_client_class = mocker.patch(
-        "glassgen.sinks.bigquery_sink.bigquery.Client"
-    )
+    mock_client_class = mocker.patch("glassgen.sinks.bigquery_sink.bigquery.Client")
     mock_client_class.from_service_account_json.return_value = mock_client_instance
 
     config = {

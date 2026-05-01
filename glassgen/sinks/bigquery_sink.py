@@ -13,21 +13,25 @@ logger = logging.getLogger(__name__)
 
 class BigQuerySinkError(Exception):
     """Base exception for BigQuery sink errors."""
+
     pass
 
 
 class BigQueryConnectionError(BigQuerySinkError):
     """Raised when connection to BigQuery fails."""
+
     pass
 
 
 class BigQueryInsertError(BigQuerySinkError):
     """Raised when inserting rows to BigQuery fails."""
+
     pass
 
 
 class BigQueryTableError(BigQuerySinkError):
     """Raised when table operations fail."""
+
     pass
 
 
@@ -50,9 +54,7 @@ class BigQuerySink(BaseSink):
             params = BigQuerySinkParams.model_validate(sink_params)
         except ValidationError as e:
             logger.error(f"Invalid sink parameters: {e}")
-            raise BigQueryConnectionError(
-                f"Invalid sink parameters: {e}"
-            ) from e
+            raise BigQueryConnectionError(f"Invalid sink parameters: {e}") from e
 
         self.project_id = params.project_id
         self.dataset = params.dataset
@@ -111,10 +113,7 @@ class BigQuerySink(BaseSink):
             logger.debug(f"Successfully inserted {len(records)} records to BigQuery")
         except GoogleAPIError as e:
             logger.error(f"BigQuery API error during insert: {e}")
-            raise BigQueryInsertError(
-                f"Failed to insert rows to BigQuery: {e}"
-            ) from e
-
+            raise BigQueryInsertError(f"Failed to insert rows to BigQuery: {e}") from e
 
     def _ensure_table_exists(self, sample_record: Dict[str, Any]) -> None:
         """Check if table exists, create it if not based on sample record schema."""
@@ -129,9 +128,7 @@ class BigQuerySink(BaseSink):
             self._create_table(sample_record)
         except GoogleAPIError as e:
             logger.error(f"Failed to check table existence: {e}")
-            raise BigQueryTableError(
-                f"Failed to check if table exists: {e}"
-            ) from e
+            raise BigQueryTableError(f"Failed to check if table exists: {e}") from e
 
     def _create_table(self, sample_record: Dict[str, Any]) -> None:
         """Create the BigQuery table based on sample record schema."""

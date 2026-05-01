@@ -116,6 +116,7 @@ def bigquery_sink_config():
         "credentials_path": "path/to/credentials.json",
     }
 
+
 @pytest.fixture
 def generator_config():
     """Fixture for generator configuration with duplication enabled"""

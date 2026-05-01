@@ -38,7 +38,7 @@ class SinkConfig(BaseModel):
         "csv": ["path"],
         "kafka": ["bootstrap.servers", "topic"],
         "webhook": ["url"],
-        "yield": []
+        "yield": [],
     }
 
     @model_validator(mode="after")
