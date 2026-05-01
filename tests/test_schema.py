@@ -492,3 +492,98 @@ def test_invalid_schema_value_type():
         ValueError, match="Invalid schema value type for field 'invalid_field'"
     ):
         ConfigSchema.from_dict(schema_dict)
+
+
+def test_day_generator():
+    """Test DAY generator using Faker"""
+    schema = ConfigSchema.from_dict({"day": "$day_of_month"})
+
+    # Generate multiple records to test range
+    for _ in range(50):
+        record = schema._generate_record()
+        assert "day" in record
+        day_value = record["day"]
+        # Faker's day_of_month returns a string like "01", "15", "31"
+        assert isinstance(day_value, str)
+        assert 1 <= int(day_value) <= 31
+
+
+def test_month_generator():
+    """Test MONTH generator using Faker"""
+    schema = ConfigSchema.from_dict({"month": "$month"})
+
+    # Generate multiple records to test range
+    for _ in range(50):
+        record = schema._generate_record()
+        assert "month" in record
+        month_value = record["month"]
+        # Faker's month returns a string like "01", "06", "12"
+        assert isinstance(month_value, str)
+        assert 1 <= int(month_value) <= 12
+
+
+def test_year_generator():
+    """Test YEAR generator using Faker"""
+    schema = ConfigSchema.from_dict({"year": "$year"})
+
+    # Generate multiple records to test
+    for _ in range(50):
+        record = schema._generate_record()
+        assert "year" in record
+        year_value = record["year"]
+        # Faker's year returns a string representing a year
+        assert isinstance(year_value, str)
+        year_int = int(year_value)
+        # Faker generates years within a reasonable range
+        assert 1970 <= year_int <= 2100
+
+
+def test_date_components_schema():
+    """Test using DAY, MONTH, and YEAR together in a schema"""
+    schema = ConfigSchema.from_dict(
+        {"day": "$day_of_month", "month": "$month", "year": "$year", "name": "$name"}
+    )
+
+    record = schema._generate_record()
+
+    # Verify all date components are present
+    assert "day" in record
+    assert "month" in record
+    assert "year" in record
+    assert "name" in record
+
+    # Verify types and ranges
+    assert isinstance(record["day"], str)
+    assert isinstance(record["month"], str)
+    assert isinstance(record["year"], str)
+    assert isinstance(record["name"], str)
+
+    assert 1 <= int(record["day"]) <= 31
+    assert 1 <= int(record["month"]) <= 12
+    assert 1970 <= int(record["year"]) <= 2100
+
+
+def test_date_components_in_nested_schema():
+    """Test DAY, MONTH, and YEAR in a nested schema"""
+    schema = ConfigSchema.from_dict(
+        {
+            "event": {
+                "date": {"day": "$day_of_month", "month": "$month", "year": "$year"},
+                "name": "$name",
+            }
+        }
+    )
+
+    record = schema._generate_record()
+
+    # Verify nested structure
+    assert "event" in record
+    assert "date" in record["event"]
+    assert "day" in record["event"]["date"]
+    assert "month" in record["event"]["date"]
+    assert "year" in record["event"]["date"]
+
+    # Verify ranges
+    assert 1 <= int(record["event"]["date"]["day"]) <= 31
+    assert 1 <= int(record["event"]["date"]["month"]) <= 12
+    assert 1970 <= int(record["event"]["date"]["year"]) <= 2100
