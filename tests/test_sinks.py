@@ -7,6 +7,7 @@ import requests
 from glassgen.schema import ConfigSchema
 from glassgen.sinks import (
     BaseSink,
+    BigQuerySink,
     CSVSink,
     NDJSONSink,
     SinkFactory,
@@ -246,3 +247,29 @@ def test_webhook_sink_error_handling(mock_webhook, webhook_sink_config):
     with pytest.raises(Exception) as exc_info:
         sink.publish({"test": "data"})
     assert "Failed to publish to webhook" in str(exc_info.value)
+
+
+def test_bigquery_sink(mocker):
+    """Test BigQuery sink creation and basic functionality"""
+    mock_client_instance = mocker.MagicMock()
+    mock_client_instance.get_table.return_value = mocker.MagicMock()
+    mock_client_instance.insert_rows_json.return_value = []
+
+    mock_client_class = mocker.patch("glassgen.sinks.bigquery_sink.bigquery.Client")
+    mock_client_class.from_service_account_json.return_value = mock_client_instance
+
+    config = {
+        "project_id": "test-project",
+        "dataset": "test_dataset",
+        "table": "test_table",
+        "credentials_path": "/fake/path/credentials.json",
+    }
+
+    sink = BigQuerySink(config)
+    data = {"name": "John Doe", "field4": ["test@example.com", "test2@example.com"]}
+    sink.publish(data)
+    sink.close()
+
+    assert sink.project_id == "test-project"
+    mock_client_instance.insert_rows_json.assert_called_once()
+    mock_client_instance.close.assert_called_once()

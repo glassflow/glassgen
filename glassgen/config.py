@@ -28,12 +28,13 @@ def validate_config(config_data: Dict[str, Any]):
 
 
 class SinkConfig(BaseModel):
-    type: Literal["csv", "kafka", "webhook", "yield"]
+    type: Literal["bigquery", "csv", "kafka", "webhook", "yield"]
     params: Optional[Dict[str, Any]] = None
     model_config = {"extra": "forbid"}
 
     # Required params for each sink type
     _SINK_REQUIRED_PARAMS: ClassVar[Dict[str, List[str]]] = {
+        "bigquery": ["project_id", "dataset", "table", "credentials_path"],
         "csv": ["path"],
         "kafka": ["bootstrap.servers", "topic"],
         "webhook": ["url"],
