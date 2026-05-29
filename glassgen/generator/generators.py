@@ -44,6 +44,9 @@ class GeneratorType(str, Enum):
     PREFIXED_ID = "prefixed_id"
     ARRAY = "array"
     QUERY_STRING = "query_string"
+    DAY = "day_of_month"
+    MONTH = "month"
+    YEAR = "year"
 
 
 def choice_generator(choices: List[str]) -> str:
@@ -251,6 +254,9 @@ class GeneratorRegistry:
             GeneratorType.PREFIXED_ID: prefixed_id_generator,
             GeneratorType.ARRAY: array_generator,
             GeneratorType.QUERY_STRING: query_string_generator,
+            GeneratorType.DAY: self._faker.day_of_month,
+            GeneratorType.MONTH: self._faker.month,
+            GeneratorType.YEAR: self._faker.year,
         }
 
     def register_generator(self, name: str, generator: Callable[..., Any]) -> None:
